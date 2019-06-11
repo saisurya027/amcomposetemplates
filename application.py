@@ -14,6 +14,6 @@ def hello():
 def submitResponse():
     #sys.stdout = open('\home\LogFiles\app.log','w')
     #print(request.data)
-    engine.execute("INSERT INTO test (name) VALUES ('JJI')")
     choice = request.args.get("Poll","")
+    engine.execute("INSERT INTO test (name) VALUES (?)",(format(choice),))
     return "Hello {}!".format(choice)
