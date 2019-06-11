@@ -9,7 +9,7 @@ engine = create_engine('postgres://%s:Amcompose2019@testamcompose.postgres.datab
 
 @app.route("/")
 def hello():
-    return "Hello B!"
+    return "Hello A!"
 @app.route("/submitResponse",methods=['POST','GET'])
 def submitResponse():
     #sys.stdout = open('\home\LogFiles\app.log','w')
