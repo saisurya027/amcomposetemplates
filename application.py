@@ -24,13 +24,12 @@ def hello():
 
 @app.route("/submitResponse", methods=['POST', 'GET'])
 def submitResponse():
-    choice = request.data
-
-    choice = choice.decode("utf-8")
-    #print(choice, file=sys.stderr)
-    lt = choice.split('#')
-    response = lt[0]
-    qid=lt[1]
+    qid = request.args.get("qid")
+    response=request.args.get("value")
+    #return "Hi"
+    #lt = choice.split('#')
+    #response = lt[0]
+    #qid=lt[1]
     engine.execute("INSERT INTO responsetemp (qid,response) VALUES (%s,%s)", (qid,response))
     payload = "{\"$schema\": \"https://adaptivecards.io/schemas/adaptive-card.json\",\n\"type\": \"AdaptiveCard\",\"version\": \"1.0\",\n\"body\": [\n{\n\"type\": \"TextBlock\",\n\"text\":\"Succesfully Submitted\",\n\"wrap\": true\n}\n]\n}"
     resp = Response(payload)
@@ -39,9 +38,19 @@ def submitResponse():
     return resp
 @app.route("/getResponses",methods=['POST'])
 def getResponses():
-    choice = request.data
-    choice = choice.decode("utf-8")
-    result = engine.execute("SELECT COUNT(*) FROM responsetemp WHERE qid = %s",choice)
-    s = result.rowcount
+    qid = request.data
+    qid = qid.decode("utf-8")
+    queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s",qid)
+    name = queryChoice.fetchall()
+    choices=str(name[0]).split(',')
+    choices[0]=choices[0][2:]
+    choices[len(choices)-2]=choices[len(choices)-2][:len(choices[len(choices)-2])-1]
+    #for i in range(len(choices)):
+    print(choices[0],file=sys.stdout)
+    print(choices[1], file=sys.stdout)
+    for i in range(len(choices)-1):
+        result = engine.execute("SELECT * FROM responsetemp WHERE qid = %s and response= %s", (qid,choices[i]))
+        s = result.rowcount
+        print(s,file=sys.stdout)
     #print(result.rowcount, file=sys.stdout)
-    return "THERE ARE {}".format(s)
+    return "THERE ARE"
