@@ -25,12 +25,13 @@ def hello():
 @app.route("/submitResponse", methods=['POST', 'GET'])
 def submitResponse():
     choice = request.data
+
     choice = choice.decode("utf-8")
     #print(choice, file=sys.stderr)
     lt = choice.split('#')
     response = lt[0]
     qid=lt[1]
-    engine.execute("INSERT INTO test (name) VALUES (%s)", (response))
+    engine.execute("INSERT INTO responsetemp (qid,response) VALUES (%s,%s)", (qid,response))
     payload = "{\"$schema\": \"https://adaptivecards.io/schemas/adaptive-card.json\",\n\"type\": \"AdaptiveCard\",\"version\": \"1.0\",\n\"body\": [\n{\n\"type\": \"TextBlock\",\n\"text\":\"Succesfully Submitted\",\n\"wrap\": true\n}\n]\n}"
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
