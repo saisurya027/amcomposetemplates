@@ -40,6 +40,7 @@ def submitResponse():
 def getResponses():
     qid = request.data
     qid = qid.decode("utf-8")
+    r=""
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s",qid)
     name = queryChoice.fetchall()
     choices=str(name[0]).split(',')
@@ -50,7 +51,7 @@ def getResponses():
     print(choices[1], file=sys.stdout)
     for i in range(len(choices)-1):
         result = engine.execute("SELECT * FROM responsetemp WHERE qid = %s and response= %s", (qid,choices[i]))
-        s = result.rowcount
-        print(s,file=sys.stdout)
+        r=r+choices[i]+"= "+ str(result.rowcount)
+        r=r+"\n"
     #print(result.rowcount, file=sys.stdout)
-    return "THERE ARE"
+    return r
