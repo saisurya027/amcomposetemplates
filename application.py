@@ -37,3 +37,11 @@ def submitResponse():
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
     return resp
+@app.route("/getResponses",methods=['POST'])
+def getResponses():
+    choice = request.data
+    choice = choice.decode("utf-8")
+    result = engine.execute("SELECT COUNT(*) FROM responsetemp WHERE qid = %s",choice)
+    s = result.rowcount
+    #print(result.rowcount, file=sys.stdout)
+    return "THERE ARE {}".format(s)
