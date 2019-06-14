@@ -75,5 +75,4 @@ def test():
     t=t+"\n}\n],\n\"autoInvokeAction\": {\n\"type\": \"Action.Http\",\n\"hideCardOnInvoke\": false,\n\"method\": \"POST\",\n\"hideCardOnInvoke\": false,\n\"https://amcomposetemplate.azurewebsites.net/test\",\n\"body\": \"{}\"\n}\n}"
     resp = Response(t)
     resp.headers['Content-Type'] = 'application/json'
-    resp.headers['CARD-UPDATE-IN-BODY'] = True
     return resp
