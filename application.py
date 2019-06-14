@@ -55,7 +55,7 @@ def getResponses():
         r=r+"\n"
     #print(result.rowcount, file=sys.stdout)
     return r
-@app.route("/fetchLatestResponses",methods=['GET'])
+@app.route("/fetchLatestResponses",methods=['POST','GET'])
 def fetchLatestResponses():
     qid = request.data
     qid=qid.decode("utf-8")
@@ -69,11 +69,22 @@ def fetchLatestResponses():
         result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid,choices[i]))
         #r=r+choices[i]+"= "+ str(result.rowcount)
         r.append(result.rowcount)
+    payload = "{\n\"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n\"originator\": \"863402fa-7924-43fa-a7e1-47293462aaf4\",\n\"type\": \"AdaptiveCard\",\n\"version\": \"1.0\",\n\"body\": [\n"
+    for i in range(len(r)):
+        if i==len(r)-1:
+            payload=payload+"{\n\"type\": \"TextBlock\",\n\"spacing\": \"none\"\n\"text\": \""+choices[i]+"-->"+str(r[i])+"\"\n}\n],\n"
+        else :
+            payload=payload+"{\n\"type\": \"TextBlock\",\n\"spacing\": \"none\"\n\"text\": \""+choices[i]+"-->"+str(r[i])+"\"\n},\n"
+    payload=payload+"autoInvokeAction\": {\n\"type\": \"Action.Http\",\n\"method\": \"POST\",\n\"hideCardOnInvoke\": false,\n\"url\": \"https://amcomposetemplate.azurewebsites.net/fetchLatestResponses\",\n\"body\": \""+qid+"\"\n}\n}"
+    resp = Response(payload)
+    resp.headers['CARD-UPDATE-IN-BODY'] = True
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
 @app.route("/test",methods=['POST'])
 def test():
     t="{\n\"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n\"originator\": \"863402fa-7924-43fa-a7e1-47293462aaf4\",\n\"type\": \"AdaptiveCard\",\n\"version\": \"1.0\",\n\"body\": [\n{\n\"type\": \"TextBlock\",\n\"spacing\": \"none\",\n\"isSubtle\": true,\n\"text\": \"lala\""
     t=t+"\n}\n],\n\"autoInvokeAction\": {\n\"type\": \"Action.Http\",\n\"method\": \"POST\",\n\"hideCardOnInvoke\": false,\n\"url\": \"https://amcomposetemplate.azurewebsites.net/test\",\n\"body\": \"{}\"\n}\n}"
     resp = Response(t)
-    resp.headers['CARD-UPDATE-IN-BODY'] = True
+
     resp.headers['Content-Type'] = 'application/json'
     return resp
