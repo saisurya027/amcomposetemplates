@@ -22,14 +22,14 @@ def hello():
     return "Hello A!"
 
 
-@app.route("/submitResponse", methods=['POST', 'GET'])
+@app.route("/submitResponse", methods=['POST'])
 def submitResponse():
-    qid = request.args.get("qid")
-    response=request.args.get("value")
+    temp=request.data
+    temp=temp.decode("utf-8")
     #return "Hi"
-    #lt = choice.split('#')
-    #response = lt[0]
-    #qid=lt[1]
+    lt = temp.split('#')
+    response = lt[0]
+    qid=lt[1]
     engine.execute("INSERT INTO responsetemp (qid,response) VALUES (%s,%s)", (qid,response))
     payload = "{\"$schema\": \"https://adaptivecards.io/schemas/adaptive-card.json\",\n\"type\": \"AdaptiveCard\",\"version\": \"1.0\",\n\"body\": [\n{\n\"type\": \"TextBlock\",\n\"text\":\"Succesfully Submitted\",\n\"wrap\": true\n}\n]\n}"
     resp = Response(payload)
