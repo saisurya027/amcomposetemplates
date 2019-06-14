@@ -47,8 +47,8 @@ def getResponses():
     choices[0]=choices[0][2:]
     choices[len(choices)-2]=choices[len(choices)-2][:len(choices[len(choices)-2])-1]
     #for i in range(len(choices)):
-    print(choices[0],file=sys.stdout)
-    print(choices[1], file=sys.stdout)
+    #print(choices[0],file=sys.stdout)
+    #print(choices[1], file=sys.stdout)
     for i in range(len(choices)-1):
         result = engine.execute("SELECT * FROM responsetemp WHERE qid = %s and response= %s", (qid,choices[i]))
         r=r+choices[i]+"= "+ str(result.rowcount)
