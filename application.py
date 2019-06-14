@@ -77,4 +77,5 @@ def test():
     t=t+"\n}\n],\n\"autoInvokeAction\": {\n\"type\": \"Action.Http\",\n\"method\": \"POST\",\n\"hideCardOnInvoke\": false,\n\"https://amcomposetemplate.azurewebsites.net/test\",\n\"body\": \"{}\"\n}\n}"
     resp = Response(t)
     resp.headers['Content-Type'] = 'application/json'
+    c=c+1
     return resp
