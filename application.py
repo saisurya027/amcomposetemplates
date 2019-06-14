@@ -3,10 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 import urllib.parse
 from sqlalchemy import create_engine
 from flask import Response
-import logging
 import responses
 import json
-import sys
 
 app = Flask(__name__)
 
@@ -46,12 +44,8 @@ def getResponses():
     choices=str(name[0]).split(',')
     choices[0]=choices[0][2:]
     choices[len(choices)-2]=choices[len(choices)-2][:len(choices[len(choices)-2])-1]
-    #for i in range(len(choices)):
-    #print(choices[0],file=sys.stdout)
-    #print(choices[1], file=sys.stdout)
     for i in range(len(choices)-1):
         result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid,choices[i]))
         r=r+choices[i]+"= "+ str(result.rowcount)
         r=r+"\n"
-    #print(result.rowcount, file=sys.stdout)
     return r
