@@ -13,7 +13,7 @@ c=0
 from sqlalchemy.engine import create_engine
 
 engine = create_engine(
-    'postgres://%s:Amcompose2019@testamcompose.postgres.database.azure.com/mypgsqldb' % urllib.parse.quote(
+    'postgres://%s:Amcompose2019@testamcompose.postgres.database.azure.com/postgres' % urllib.parse.quote(
         'newuser@testamcompose'))
 
 
