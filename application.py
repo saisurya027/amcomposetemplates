@@ -22,7 +22,7 @@ engine = create_engine(
 
 @app.route("/")
 def hello():
-    return "Hello A!"
+    return "Hello AC!"
 
 
 @app.route("/submitResponse", methods=['POST'])
