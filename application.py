@@ -60,8 +60,10 @@ def getResponses():
     return r
 @app.route("/fetchLatestResponses",methods=['POST','GET'])
 def fetchLatestResponses():
-    qid = request.data
-    qid=qid.decode("utf-8")
+    loaded_json = str(request.data)
+    loaded_json = json.loads(loaded_json)
+    qid=loaded_json['qid']
+    #qid=qid.decode("utf-8")
     r = []
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
     name = queryChoice.fetchall()
