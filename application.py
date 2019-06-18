@@ -22,7 +22,7 @@ engine = create_engine(
 
 @app.route("/")
 def hello():
-    return "Hello AC!"
+    return "Hello A!"
 
 
 @app.route("/submitResponse", methods=['POST'])
@@ -93,7 +93,8 @@ def test():
     return resp
 @app.route("/sendEmail",methods=['POST'])
 def sendEmail():
-    qid = request.args.get('qid')
+    qid = request.data
+    qid = qid.decode("utf-8")
     me = "meganb@M365x814387.onmicrosoft.com"
     you = "meganb@M365x814387.onmicrosoft.com"
 
