@@ -127,7 +127,7 @@ def sendEmail():
             "method": "POST",
             "hideCardOnInvoke": false,
             "url": "https://amcompose.azurewebsites.net/fetchLatestResponses",
-            "body": """+qid+"""
+            "body": {}
         }
     }
       </script>
@@ -136,7 +136,7 @@ def sendEmail():
     Visit the <a href="https://docs.microsoft.com/outlook/actionable-messages">Outlook Dev Portal</a> to learn more about Actionable Messages.
     </body>
     </html>
-    """
+    """.format(qid)
 
     # Record the MIME types of both parts - text/plain and text/html.
     part1 = MIMEText(text, 'plain')
