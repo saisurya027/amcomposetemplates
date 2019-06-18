@@ -60,10 +60,8 @@ def getResponses():
     return r
 @app.route("/fetchLatestResponses",methods=['POST','GET'])
 def fetchLatestResponses():
-    loaded_json = str(request.data)
-    loaded_json = json.loads(loaded_json)
-    qid=loaded_json['qid']
-    #qid=qid.decode("utf-8")
+    qid = request.data
+    qid=qid.decode("utf-8")
     r = []
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
     name = queryChoice.fetchall()
@@ -95,7 +93,7 @@ def test():
     return resp
 @app.route("/sendEmail",methods=['POST'])
 def sendEmail():
-    qid = request.args.get('qid')
+    qid = request.data
     qid = qid.decode("utf-8")
     me = "meganb@M365x814387.onmicrosoft.com"
     you = "meganb@M365x814387.onmicrosoft.com"
