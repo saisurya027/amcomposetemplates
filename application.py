@@ -93,8 +93,7 @@ def test():
     return resp
 @app.route("/sendEmail",methods=['POST'])
 def sendEmail():
-    qid = request.data
-    qid = qid.decode("utf-8")
+    qid = request.args.get('qid')
     me = "meganb@M365x814387.onmicrosoft.com"
     you = "meganb@M365x814387.onmicrosoft.com"
 
