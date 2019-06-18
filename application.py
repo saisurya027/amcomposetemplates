@@ -127,7 +127,7 @@ def sendEmail():
             "method": "POST",
             "hideCardOnInvoke": false,
             "url": "https://amcompose.azurewebsites.net/fetchLatestResponses",
-            "body": """+"\""+qid+"\""+""""
+            "body": """+"\""+qid+""""
         }
     }
       </script>
