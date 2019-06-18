@@ -105,7 +105,7 @@ def sendEmail():
 
     # Create the body of the message (a plain-text and an HTML version).
     text = "Hi!\nHow are you?\nHere is the link you wanted:\nhttp://www.python.org"
-    html = """\
+    html = ("""\
     <html>
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -127,7 +127,7 @@ def sendEmail():
             "method": "POST",
             "hideCardOnInvoke": false,
             "url": "https://amcompose.azurewebsites.net/fetchLatestResponses",
-            "body": {}
+            "body": %s
         }
     }
       </script>
@@ -136,7 +136,7 @@ def sendEmail():
     Visit the <a href="https://docs.microsoft.com/outlook/actionable-messages">Outlook Dev Portal</a> to learn more about Actionable Messages.
     </body>
     </html>
-    """.format(qid)
+    """,qid)
 
     # Record the MIME types of both parts - text/plain and text/html.
     part1 = MIMEText(text, 'plain')
