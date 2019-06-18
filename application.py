@@ -94,6 +94,7 @@ def test():
 @app.route("/sendEmail",methods=['POST'])
 def sendEmail():
     qid = request.args.get('qid')
+    qid = qid.decode("utf-8")
     me = "meganb@M365x814387.onmicrosoft.com"
     you = "meganb@M365x814387.onmicrosoft.com"
 
