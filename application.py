@@ -35,6 +35,7 @@ def submitResponse():
     engine.execute("INSERT INTO responses (qid,response) VALUES (%s,%s)", (qid,response))
     ques = engine.execute("SELECT ques FROM question WHERE qid = %s", qid)
     question = ques.fetchall()
+    question=str(question)
     payload = """{
     "type": "AdaptiveCard",
     "version": "1.0",
