@@ -128,14 +128,10 @@ def getResponses():
     choices=str(name[0]).split(',')
     choices[0]=choices[0][2:]
     choices[len(choices)-2]=choices[len(choices)-2][:len(choices[len(choices)-2])-1]
-    #for i in range(len(choices)):
-    #print(choices[0],file=sys.stdout)
-    #print(choices[1], file=sys.stdout)
     for i in range(len(choices)-1):
         result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid,choices[i]))
         r=r+choices[i]+"= "+ str(result.rowcount)
         r=r+"\n"
-    #print(result.rowcount, file=sys.stdout)
     return r
 @app.route("/fetchLatestResponses",methods=['POST','GET'])
 def fetchLatestResponses():
@@ -158,7 +154,7 @@ def fetchLatestResponses():
             payload=payload+"{\n\"type\": \"TextBlock\",\n\"spacing\": \"none\",\n\"text\": \""+choices[i]+"-->"+str(r[i])+"\"\n}\n],\n"
         else :
             payload=payload+"{\n\"type\": \"TextBlock\",\n\"spacing\": \"none\",\n\"text\": \""+choices[i]+"-->"+str(r[i])+"\"\n},\n"
-    payload=payload+"\"autoInvokeAction\": {\n\"type\": \"Action.Http\",\n\"method\": \"POST\",\n\"hideCardOnInvoke\": false,\n\"url\": \"https://amcomposetemplate.azurewebsites.net/fetchLatestResponses\",\n\"body\": \""+qid+"\"\n}\n}"
+    payload=payload+"\"autoInvokeAction\": {\n\"type\": \"Action.Http\",\n\"method\": \"POST\",\n\"hideCardOnInvoke\": false,\n\"url\": \"https://amcompose.azurewebsites.net/fetchLatestResponses\",\n\"body\": \""+qid+"\"\n}\n}"
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
@@ -168,7 +164,6 @@ def test():
     t="{\n\"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n\"originator\": \"863402fa-7924-43fa-a7e1-47293462aaf4\",\n\"type\": \"AdaptiveCard\",\n\"version\": \"1.0\",\n\"body\": [\n{\n\"type\": \"TextBlock\",\n\"spacing\": \"none\",\n\"isSubtle\": true,\n\"text\": \"lala\""
     t=t+"\n}\n],\n\"autoInvokeAction\": {\n\"type\": \"Action.Http\",\n\"method\": \"POST\",\n\"hideCardOnInvoke\": false,\n\"url\": \"https://amcomposetemplate.azurewebsites.net/test\",\n\"body\": \"{}\"\n}\n}"
     resp = Response(t)
-
     resp.headers['Content-Type'] = 'application/json'
     return resp
 @app.route("/sendEmail",methods=['POST'])
@@ -177,13 +172,11 @@ def sendEmail():
     qid = qid.decode("utf-8")
     me = "meganb@M365x814387.onmicrosoft.com"
     you = "meganb@M365x814387.onmicrosoft.com"
-
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "Link"
     msg['From'] = "{}".format(me)
     msg['To'] = "{}".format(you)
-
     # Create the body of the message (a plain-text and an HTML version).
     text = "Hi!\nHow are you?\nHere is the link you wanted:\nhttp://www.python.org"
     html = """\
