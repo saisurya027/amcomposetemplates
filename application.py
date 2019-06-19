@@ -36,7 +36,7 @@ def submitResponse():
     ques = engine.execute("SELECT ques FROM question WHERE qid = %s", qid)
     question = ques.fetchall()
     question=str(question[0])
-    question=question[1:]
+    question=question[2:len(question)-2]
     payload = """{
     "type": "AdaptiveCard",
     "version": "1.0",
