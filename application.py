@@ -68,6 +68,8 @@ def generatestatistics(qid,question,Options,results):
     for i in range(len(tcount)):
         if tcount[i]!='(' and tcount[i]!=')' and tcount[i]!=',' and tcount[i]!=' ' and tcount[i]!='':
             ttcount=ttcount+tcount[i]
+    if(ttcount==''):
+        ttcount='0'
     total = int(ttcount)
     for i in range(len(results)):
         size=(300*results[i])/total
@@ -158,7 +160,6 @@ def generatePayload(question,response):
                         "wrap": true,
                         "type": "TextBlock",
                         "separator": true
-
                     }
                 ]
             }
