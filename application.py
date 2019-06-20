@@ -66,7 +66,7 @@ def generatestatistics(qid,question,Options,results):
     tcount = str(tcount[0][2:len(tcount[0]) - 3])
     ttcount=""
     for i in range(len(tcount)):
-        if tcount[i]!=')' and tcount[i]!=')' and tcount[i]!=',':
+        if tcount[i]!='(' and tcount[i]!=')' and tcount[i]!=',':
             ttcount=ttcount+tcount[i]
     total = int(ttcount)
     for i in range(len(results)):
