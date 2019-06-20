@@ -49,12 +49,14 @@ def generatecount(qid,results):
         count=count+results[i]
     queryCount = engine.execute("SELECT count FROM receipients WHERE qid = %s", qid)
     tcount = queryCount.fetchall()
-    tcount = tcount[0][2:len(tcount[0])-3]
+
+    tcount = str(tcount[0])[1:len(tcount[0])-3]
     total = int(tcount)
     item['text']=str(count)+' out of '+str(total)+' people have responded'
     countresult['items'].append(item)
     return countresult
 def generatestatistics(qid,question,Options,results):
+    question=question[2:len(question)-3]
     question="**"+question+"**"
     stats={'type': 'Container', 'separator': 'true', 'spacing': 'none',
                   'padding': {'right': 'padding', 'left': 'padding', 'bottom': 'padding', 'top': 'padding'},'items':[]}
@@ -63,26 +65,23 @@ def generatestatistics(qid,question,Options,results):
     sizes=[]
     queryCount = engine.execute("SELECT count FROM receipients WHERE qid = %s", qid)
     tcount = queryCount.fetchall()
-    tcount = str(tcount[0][2:len(tcount[0]) - 3])
-    ttcount=""
-    for i in range(len(tcount)):
-        if tcount[i]!='(' and tcount[i]!=')' and tcount[i]!=',' and tcount[i]!=' ' and tcount[i]!='':
-            ttcount=ttcount+tcount[i]
-    if(ttcount==''):
-        ttcount='1'
-    total = int(ttcount)
+    count = str(tcount[0])[1:len(tcount[0])-3]
+    total = int(count)
     for i in range(len(results)):
         size=(300*results[i])/total
         size=int(size)
         sizes.append(size)
-    for i in range(len(Options)):
+    print(str(len(Options)), file=sys.stdout)
+    for i in range(len(Options)-1):
         items={'type':'TextBlock','text':Options[i],'size':'Large','wrap':True}
         stats['items'].append(items)
         titems={'type':'Image','spacing':'none','padding':'none','padding':'none','height':'25px','url':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADeSURBVDhPtc1NCsIwEAXgWWrtj3oBb+ARvJl/bQU9hu5cegdXrhRc2IrYeggtgjwTmmCNKZJFFh/vEWYmVDwL2EabXQLbaDBcwzbqjbawjYIwgW3kRhfYRl50BueLlNxY37nqrLrnafbYJykrqRiWvcyq6tv3bF3/JDXjK0oZmjO1s6ztLGX/s8c+ubFSasz+dJ5Kd2RXZyudWmEGlRvlaDE86zrPr66544ikbpjjxzRDxwCf194RqD1JoArGJ2O6OxJ58z1U/uJgTHdHov7yCNto9XhBtbyb090pvfAGnMoj2pIEjCsAAAAASUVORK5CYII=','width':str(sizes[i])+'px'}
+        if sizes[i] == 0:
+            titems['isVisible']=False
         stats['items'].append(titems)
     return stats
 
-def generatePayload(qid,question,Options,results):
+def generatePayload2(qid,question,Options,results):
     payload={'type':'AdaptiveCard','version':'1.0','padding':'none','originator':'863402fa-7924-43fa-a7e1-47293462aaf4','body':[]}
     payload['body'].append(generateheader())
     payload['body'].append(generatecount(qid,results))
@@ -223,7 +222,7 @@ def fetchLatestResponses():
         else :
             payload=payload+"{\n\"type\": \"TextBlock\",\n\"spacing\": \"none\",\n\"text\": \""+choices[i]+"-->"+str(r[i])+"\"\n},\n"
     payload=payload+"\"autoInvokeAction\": {\n\"type\": \"Action.Http\",\n\"method\": \"POST\",\n\"hideCardOnInvoke\": false,\n\"url\": \"https://amcompose.azurewebsites.net/fetchLatestResponses\",\n\"body\": \""+qid+"\"\n}\n}"
-    payload=generatestatistics(qid,question,choices,r)
+    payload=generatePayload2(qid,question,choices,r)
     payload=json.dumps(payload)
     payload=str(payload)
     resp = Response(payload)
@@ -233,10 +232,12 @@ def fetchLatestResponses():
 @app.route("/test",methods=['POST'])
 def test():
     qid = request.data
+
     qid = qid.decode("utf-8")
-    queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
+    queryChoice = engine.execute("SELECT count FROM receipients WHERE qid = %s", qid)
     name = queryChoice.fetchall()
-    return str(name)
+    count = str(name[0])[1:len(name[0])-3]
+    return str(count)
     t="{\n\"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n\"originator\": \"863402fa-7924-43fa-a7e1-47293462aaf4\",\n\"type\": \"AdaptiveCard\",\n\"version\": \"1.0\",\n\"body\": [\n{\n\"type\": \"TextBlock\",\n\"spacing\": \"none\",\n\"isSubtle\": true,\n\"text\": \"lala\""
     t=t+"\n}\n],\n\"autoInvokeAction\": {\n\"type\": \"Action.Http\",\n\"method\": \"POST\",\n\"hideCardOnInvoke\": false,\n\"url\": \"https://amcomposetemplate.azurewebsites.net/test\",\n\"body\": \"{}\"\n}\n}"
     resp = Response(t)
