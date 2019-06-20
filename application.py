@@ -291,6 +291,7 @@ def sendEmail():
   <script type="application/adaptivecard+json">{
     "type": "AdaptiveCard",
     "version": "1.0",
+    "originator": "863402fa-7924-43fa-a7e1-47293462aaf4",
     "hideOriginalBody": true,
     "body": [
       {
