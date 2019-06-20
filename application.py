@@ -278,8 +278,7 @@ def sendEmail():
     <html>
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-      <script type="application/adaptivecard+json">"""+payload+"""
-      </script>
+      <script type="application/adaptivecard+json">"""+payload+"""</script>
     </head>
     <body>
     Visit the <a href="https://docs.microsoft.com/outlook/actionable-messages">Outlook Dev Portal</a> to learn more about Actionable Messages.
