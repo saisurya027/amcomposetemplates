@@ -249,13 +249,14 @@ def sendEmail():
     qid = qid.decode("utf-8")
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
     name = queryChoice.fetchall()
-    print(str(name[0]), file=sys.stdout)
+    
     choices = str(name[0]).split(',')
     choices[0] = choices[0][2:]
     choices[len(choices) - 2] = choices[len(choices) - 2][:len(choices[len(choices) - 2]) - 1]
     queryChoice = engine.execute("SELECT ques FROM question WHERE qid = %s", qid)
     name = queryChoice.fetchall()
     question=str(name[0])
+    r=[]
     for i in range(len(choices)-1):
         result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid,choices[i]))
         #r=r+choices[i]+"= "+ str(result.rowcount)
@@ -263,6 +264,7 @@ def sendEmail():
     payload=generatePayload2(qid,question,choices,r)
     payload=json.dumps(payload)
     payload=str(payload)
+    print(payload, file=sys.stdout)
     me = "meganb@M365x814387.onmicrosoft.com"
     you = "meganb@M365x814387.onmicrosoft.com"
     # Create message container - the correct MIME type is multipart/alternative.
