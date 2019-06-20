@@ -247,7 +247,22 @@ def test():
 def sendEmail():
     qid = request.data
     qid = qid.decode("utf-8")
-    
+    queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
+    name = queryChoice.fetchall()
+    print(str(name[0]), file=sys.stdout)
+    choices = str(name[0]).split(',')
+    choices[0] = choices[0][2:]
+    choices[len(choices) - 2] = choices[len(choices) - 2][:len(choices[len(choices) - 2]) - 1]
+    queryChoice = engine.execute("SELECT ques FROM question WHERE qid = %s", qid)
+    name = queryChoice.fetchall()
+    question=str(name[0])
+    for i in range(len(choices)-1):
+        result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid,choices[i]))
+        #r=r+choices[i]+"= "+ str(result.rowcount)
+        r.append(result.rowcount)
+    payload=generatePayload2(qid,question,choices,r)
+    payload=json.dumps(payload)
+    payload=str(payload)
     me = "meganb@M365x814387.onmicrosoft.com"
     you = "meganb@M365x814387.onmicrosoft.com"
     # Create message container - the correct MIME type is multipart/alternative.
@@ -261,28 +276,7 @@ def sendEmail():
     <html>
     <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-      <script type="application/adaptivecard+json">{
-    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "originator": "863402fa-7924-43fa-a7e1-47293462aaf4",
-    "type": "AdaptiveCard",
-    "version": "1.0",
-    "body": [
-        {
-            "size": "large",
-            "text": " ",
-            "wrap": true,
-            "type": "TextBlock",
-            "separator": true
-        }
-],
-"autoInvokeAction": {
-"type": "Action.Http",
-"method": "POST",
-"hideCardOnInvoke": false,
-"url": "https://amcompose.azurewebsites.net/fetchLatestResponses",
-"body": "37c061ac-189a-4833-81d1-206490278afd"
-}
-}
+      <script type="application/adaptivecard+json">"""+payload+"""
       </script>
     </head>
     <body>
