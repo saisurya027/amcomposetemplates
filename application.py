@@ -64,6 +64,10 @@ def generatestatistics(qid,question,Options,results):
     queryCount = engine.execute("SELECT count FROM receipients WHERE qid = %s", qid)
     tcount = queryCount.fetchall()
     tcount = str(tcount[0][2:len(tcount[0]) - 3])
+    ttcount=""
+    for i in range(len(tcount)):
+        if tcount[i]!=')' and tcount[i]!=')' and tcount[i]!=',':
+            ttcount=ttcount+tcount[i]
     total = int(tcount)
     for i in range(len(results)):
         size=(300*results[i])/total
