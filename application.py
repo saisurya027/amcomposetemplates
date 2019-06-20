@@ -68,7 +68,7 @@ def generatestatistics(qid,question,Options,results):
     for i in range(len(tcount)):
         if tcount[i]!=')' and tcount[i]!=')' and tcount[i]!=',':
             ttcount=ttcount+tcount[i]
-    total = int(tcount)
+    total = int(ttcount)
     for i in range(len(results)):
         size=(300*results[i])/total
         size=int(size)
