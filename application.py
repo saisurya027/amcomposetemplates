@@ -279,7 +279,7 @@ def sendEmail():
     you = "meganb@M365x814387.onmicrosoft.com"
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "Link"
+    msg['Subject'] = "Responses Of Your Poll"
     msg['From'] = "{}".format(me)
     msg['To'] = "{}".format(you)
     # Create the body of the message (a plain-text and an HTML version).
