@@ -296,8 +296,7 @@ def sendEmail():
     "body": [
       {
         "type": "TextBlock",
-        "text": "O people responded",
-        "size": "large"
+        "text": "Responses will be displayed soon..."
       }
     ],
     "autoInvokeAction": {
