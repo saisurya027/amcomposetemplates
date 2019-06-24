@@ -290,6 +290,7 @@ def sendEmail():
         # r=r+choices[i]+"= "+ str(result.rowcount)
         r.append(result.rowcount)
     payload = generatePayload2(qid, question, choices, r)
+    payload = json.dumps(payload)
     payload = str(payload)
 
     me = "meganb@M365x814387.onmicrosoft.com"
@@ -305,7 +306,26 @@ def sendEmail():
     <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script type="application/adaptivecard+json">"""+payload+"""
+  <script type="application/adaptivecard+json">{
+    "type": "AdaptiveCard",
+    "version": "1.0",
+    "originator": "863402fa-7924-43fa-a7e1-47293462aaf4",
+    "hideOriginalBody": true,
+    "body": [
+      {
+        "type": "TextBlock",
+        "text": "O people responded",
+        "size": "large"
+      }
+    ],
+    "autoInvokeAction": {
+        "type": "Action.Http",
+        "method": "POST",
+        "hideCardOnInvoke": false,
+        "url": "https://amcompose.azurewebsites.net/fetchLatestResponses",
+        "body": """+"\""+qid+"\""+"""
+    }
+  }
   </script>
 </head>
 <body>
