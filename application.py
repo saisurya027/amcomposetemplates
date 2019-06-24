@@ -293,7 +293,7 @@ def sendEmail():
     payload = str(payload)
 
     me = "meganb@M365x814387.onmicrosoft.com"
-    you = "t-sais@micorosoft.com"
+    you = "meganb@M365x814387.onmicrosoft.com"
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "Responses Of Your Poll"
