@@ -275,24 +275,6 @@ def test():
 def sendEmail():
     qid = request.data
     qid = qid.decode("utf-8")
-    r = []
-    queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
-    name = queryChoice.fetchall()
-
-    choices = str(name[0]).split(',')
-    choices[0] = choices[0][2:]
-    choices[len(choices) - 2] = choices[len(choices) - 2][:len(choices[len(choices) - 2]) - 1]
-    queryChoice = engine.execute("SELECT ques FROM question WHERE qid = %s", qid)
-    name = queryChoice.fetchall()
-    question = str(name[0])
-    for i in range(len(choices) - 1):
-        result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid, choices[i]))
-        # r=r+choices[i]+"= "+ str(result.rowcount)
-        r.append(result.rowcount)
-    payload = generatePayload2(qid, question, choices, r)
-    payload = json.dumps(payload)
-    payload = str(payload)
-
     me = "meganb@M365x814387.onmicrosoft.com"
     you = "meganb@M365x814387.onmicrosoft.com"
     # Create message container - the correct MIME type is multipart/alternative.
@@ -333,7 +315,6 @@ Visit the <a href="https://docs.microsoft.com/outlook/actionable-messages">Outlo
 </body>
 </html>
     """
-    print(html, file=sys.stdout)
     # Record the MIME types of both parts - text/plain and text/html.
     part1 = MIMEText(text, 'plain')
     part2 = MIMEText(html, 'html')
