@@ -83,7 +83,7 @@ def generatestatistics(qid, question, Options, results):
         sizes.append(size)
     print(str(len(Options)), file=sys.stdout)
     for i in range(len(Options) - 1):
-        items = {'type': 'TextBlock', 'text': Options[i], 'size': 'Large', 'wrap': True}
+        items = {'type': 'TextBlock', 'text': Options[i]+' - '+str(results[i])+'/'+str(total), 'size': 'Large', 'wrap': True}
         stats['items'].append(items)
         titems = {'type': 'Image', 'spacing': 'none', 'padding': 'none', 'padding': 'none', 'height': '25px',
                   'url': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADeSURBVDhPtc1NCsIwEAXgWWrtj3oBb+ARvJl/bQU9hu5cegdXrhRc2IrYeggtgjwTmmCNKZJFFh/vEWYmVDwL2EabXQLbaDBcwzbqjbawjYIwgW3kRhfYRl50BueLlNxY37nqrLrnafbYJykrqRiWvcyq6tv3bF3/JDXjK0oZmjO1s6ztLGX/s8c+ubFSasz+dJ5Kd2RXZyudWmEGlRvlaDE86zrPr66544ikbpjjxzRDxwCf194RqD1JoArGJ2O6OxJ58z1U/uJgTHdHov7yCNto9XhBtbyb090pvfAGnMoj2pIEjCsAAAAASUVORK5CYII=',
@@ -309,9 +309,6 @@ def sendEmail():
   }
   </script>
 </head>
-<body>
-Visit the <a href="https://docs.microsoft.com/outlook/actionable-messages">Outlook Dev Portal</a> to learn more about Actionable Messages.
-</body>
 </html>
     """
     # Record the MIME types of both parts - text/plain and text/html.
