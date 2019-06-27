@@ -323,7 +323,7 @@ def sendEmail():
     mail = smtplib.SMTP('smtp.office365.com', 587)
     mail.ehlo()
     mail.starttls()
-    mail.login('meganb@M365x813361.onmicrosoft.com', 'nasabhar@231195')
+    mail.login('meganb@M365x813361.onmicrosoft.com', 'mahgarg@2642')
     mail.sendmail(me, you, msg.as_string())
     mail.quit()
     return "HELLO"
