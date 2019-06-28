@@ -26,7 +26,7 @@ def hello():
     return "Hello A!"
 
 
-def generateheader(qid):
+def generateheader():
     header = {'type': 'Container', 'style': 'emphasis', 'items': []}
     items = {'type': 'ColumnSet', 'columns': []}
     col1 = {'width': '32px', 'type': 'Column', 'bleed': False, 'items': []}
@@ -40,9 +40,7 @@ def generateheader(qid):
     col2['items'].append(col2item)
     items['columns'].append(col2)
     col3 = {'width': 'auto', 'type': 'Column', 'bleed': False, 'items': []}
-    col3items = {'type': 'ActionSet','actions':[]}
-    col3itemsact={'type':'Action.Http','method':'POST','url':'https://amcompose.azurewebsites.net/fetchLatestResponses','body':qid,'title':'Refresh','isPrimary':True}
-    col3items['actions'].append(col3itemsact)
+    col3items = {'type': 'TextBlock', 'text': 'Results', 'size': 'Large', 'color': 'accent', 'height': 'stretch'}
     col3['items'].append(col3items)
     items['columns'].append(col3)
     header['items'].append(items)
@@ -95,13 +93,18 @@ def generatestatistics(qid, question, Options, results):
         stats['items'].append(titems)
     return stats
 
-
+def generateRefreshButton(qid):
+    button={'type':'ActionSet','actions':[]}
+    buttonaction={'type':'Action.Http','method':'POST','url':'https://amcompose.azurewebsites.net/fetchLatestResponses','body':qid,'title':'Get Latest Responses','isPrimary':True}
+    button['actions'].append(buttonaction)
+    return button
 def generatePayload2(qid, question, Options, results):
     payload = {'type': 'AdaptiveCard', 'version': '1.0', 'padding': 'none',
                'originator': '863402fa-7924-43fa-a7e1-47293462aaf4', 'body': []}
-    payload['body'].append(generateheader(qid))
+    payload['body'].append(generateheader())
     payload['body'].append(generatecount(qid, results))
     payload['body'].append(generatestatistics(qid, question, Options, results))
+    payload['body'].apppend(generateRefreshButton(qid))
     payload['autoInvokeAction'] = {'type': 'Action.Http', 'method': 'POST', 'hideCardOnInvoke': False,
                                    'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', 'body': qid}
     return payload
