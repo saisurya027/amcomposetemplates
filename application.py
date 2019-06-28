@@ -104,7 +104,7 @@ def generatePayload2(qid, question, Options, results):
     payload['body'].append(generateheader())
     payload['body'].append(generatecount(qid, results))
     payload['body'].append(generatestatistics(qid, question, Options, results))
-    payload['body'].apppend(generateRefreshButton(qid))
+    payload['body'].append(generateRefreshButton(qid))
     payload['autoInvokeAction'] = {'type': 'Action.Http', 'method': 'POST', 'hideCardOnInvoke': False,
                                    'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', 'body': qid}
     return payload
