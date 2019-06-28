@@ -40,7 +40,7 @@ def generateheader():
     col2['items'].append(col2item)
     items['columns'].append(col2)
     col3 = {'width': 'auto', 'type': 'Column', 'bleed': False, 'items': []}
-    col3items = {'type': 'TextBlock', 'text': 'Results', 'size': 'Large', 'color': 'accent', 'height': 'stretch'}
+    col3items = {'type': 'TextBlock', 'text': '[Refresh](action:inlineActionID)', 'size': 'Large', 'color': 'accent', 'height': 'stretch'}
     col3['items'].append(col3items)
     items['columns'].append(col3)
     header['items'].append(items)
@@ -104,9 +104,11 @@ def generatePayload2(qid, question, Options, results):
     payload['body'].append(generateheader())
     payload['body'].append(generatecount(qid, results))
     payload['body'].append(generatestatistics(qid, question, Options, results))
-    payload['body'].append(generateRefreshButton(qid))
     payload['autoInvokeAction'] = {'type': 'Action.Http', 'method': 'POST', 'hideCardOnInvoke': False,
                                    'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', 'body': qid}
+    payload['resources']={'actions':[]}
+    resourceactions={'id':'inlineActionID','type':'Action.Http','method':'POST','title':'Refresh','url':'https://amcompose.azurewebsites.net/fetchLatestResponses','body':qid}
+    payload['resources']['actions'].append(resourceactions)
     return payload
 
 
