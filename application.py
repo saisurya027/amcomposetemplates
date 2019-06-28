@@ -26,7 +26,7 @@ def hello():
     return "Hello A!"
 
 
-def generateheader():
+def generateheader(qid):
     header = {'type': 'Container', 'style': 'emphasis', 'items': []}
     items = {'type': 'ColumnSet', 'columns': []}
     col1 = {'width': '32px', 'type': 'Column', 'bleed': False, 'items': []}
@@ -40,7 +40,9 @@ def generateheader():
     col2['items'].append(col2item)
     items['columns'].append(col2)
     col3 = {'width': 'auto', 'type': 'Column', 'bleed': False, 'items': []}
-    col3items = {'type': 'TextBlock', 'text': 'Results', 'size': 'Large', 'color': 'accent', 'height': 'stretch'}
+    col3items = {'type': 'ActionSet','actions':[]}
+    col3itemsact={'type':'Action.Http','method':'POST','url':'https://amcompose.azurewebsites.net/fetchLatestResponses','body':qid,'title':'Refresh','isPrimary':True}
+    col3items['actions'].append(col3itemsact)
     col3['items'].append(col3items)
     items['columns'].append(col3)
     header['items'].append(items)
@@ -97,7 +99,7 @@ def generatestatistics(qid, question, Options, results):
 def generatePayload2(qid, question, Options, results):
     payload = {'type': 'AdaptiveCard', 'version': '1.0', 'padding': 'none',
                'originator': '863402fa-7924-43fa-a7e1-47293462aaf4', 'body': []}
-    payload['body'].append(generateheader())
+    payload['body'].append(generateheader(qid))
     payload['body'].append(generatecount(qid, results))
     payload['body'].append(generatestatistics(qid, question, Options, results))
     payload['autoInvokeAction'] = {'type': 'Action.Http', 'method': 'POST', 'hideCardOnInvoke': False,
