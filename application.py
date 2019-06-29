@@ -189,6 +189,33 @@ def generatePayload(question, response):
         """
     return payload
 
+@app.route("/submitResponseVisible", methods=['POST'])
+def submitResponseVisible():
+    temp = request.data
+    temp = temp.decode("utf-8")
+    lt = temp.split('#')
+    response = lt[0]
+    qid = lt[1]
+    engine.execute("INSERT INTO responses (qid,response) VALUES (%s,%s)", (qid, response))
+    r = []
+    queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
+    name = queryChoice.fetchall()
+    print(str(name[0]), file=sys.stdout)
+    choices = str(name[0]).split(',')
+    choices[0] = choices[0][2:]
+    choices[len(choices) - 2] = choices[len(choices) - 2][:len(choices[len(choices) - 2]) - 1]
+    queryChoice = engine.execute("SELECT ques FROM question WHERE qid = %s", qid)
+    name = queryChoice.fetchall()
+    question = str(name[0])
+    for i in range(len(choices) - 1):
+        result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid, choices[i]))
+        # r=r+choices[i]+"= "+ str(result.rowcount)
+        r.append(result.rowcount)
+    payload = generatePayload2(qid, question, choices, r)
+    resp = Response(payload)
+    resp.headers['CARD-UPDATE-IN-BODY'] = True
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
 
 @app.route("/submitResponse", methods=['POST'])
 def submitResponse():
