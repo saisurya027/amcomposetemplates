@@ -111,7 +111,7 @@ def generateheaderquestion(expirytime):
     expiry=datetime.datetime.strptime(expirytime,'%Y-%m-%d %H:%M')
     expiry = expiry.astimezone(pytz.timezone("Asia/Kolkata"))
     #expiry = expiry.replace(tzinfo=timezone('Asia/Kolkata'))
-    expirytime = expiry.strftime('%a')+' '+expiry.strftime('%d')+' '+expiry.strftime('%b')+', '+expiry.strftime('%Y')+', '+expiry.strftime('%H')+':'+expiry.strftime('%M')
+    expirytime = expiry.strftime('%a')+' '+expiry.strftime('%d')+' '+expiry.strftime('%b')+', '+expiry.strftime('%Y')+', '+expiry.strftime('%I')+':'+expiry.strftime('%M')+' '+expiry.strftime('%p')
     print(expiry, file=sys.stdout)
     col2item2={'type': 'TextBlock', 'text': 'Due by '+expirytime, 'size': 'small',}
     col2['items'].append(col2item2)
