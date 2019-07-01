@@ -8,6 +8,7 @@ import responses
 import json
 import sys
 import smtplib
+import codecs
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -364,3 +365,8 @@ def sendEmail():
     mail.sendmail(me, you, msg.as_string())
     mail.quit()
     return "HELL0"
+
+@app.route("/getHtmlTemplate", methods=['GET'])
+def getHtml():
+    f = codecs.open("template.html", 'r')
+    return f.read()
