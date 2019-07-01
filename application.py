@@ -212,6 +212,9 @@ def submitResponseVisible():
         # r=r+choices[i]+"= "+ str(result.rowcount)
         r.append(result.rowcount)
     payload = generatePayload2(qid, question, choices, r)
+    payload = json.dumps(payload)
+    payload = str(payload)
+    print(str(payload), file=sys.stdout)
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
