@@ -108,6 +108,7 @@ def generateheaderquestion(expirytime):
     col2item = {'type': 'TextBlock', 'text': 'Quick Poll', 'size': 'Large', 'height': 'stretch'}
     col2['items'].append(col2item)
     expiry=datetime.datetime.strptime(expirytime,'%Y-%m-%d %H:%M')
+    expiry = expiry.replace(tzinfo=timezone('Asia/Kolkata'))
     expirytime = expiry.strftime('%a')+' '+expiry.strftime('%d')+' '+expiry.strftime('%b')+','+expiry.strftime('%Y')+','+expiry.strftime('%H')+':'+expiry.strftime('%M')
     print(expiry, file=sys.stdout)
     col2item2={'type': 'TextBlock', 'text': 'Due by '+expirytime, 'size': 'small',}
