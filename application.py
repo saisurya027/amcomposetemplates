@@ -16,7 +16,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 app = Flask(__name__)
-c = 0
 from sqlalchemy.engine import create_engine
 
 engine = create_engine(
