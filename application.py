@@ -472,8 +472,8 @@ def test():
 def sendEmail():
     qid = request.data
     qid = qid.decode("utf-8")
-    me = "meganb@M365x813361.onmicrosoft.com"
-    you = "meganb@M365x813361.onmicrosoft.com"
+    me = "meganb@M365x331543.onmicrosoft.com"
+    you = "meganb@M365x331543.onmicrosoft.com"
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "Responses Of Your Poll"
@@ -520,7 +520,7 @@ def sendEmail():
     mail = smtplib.SMTP('smtp.office365.com', 587)
     mail.ehlo()
     mail.starttls()
-    mail.login('meganb@M365x813361.onmicrosoft.com', 'mahgarg@2642')
+    mail.login('meganb@M365x331543.onmicrosoft.com', 'mahgarg@2642')
     mail.sendmail(me, you, msg.as_string())
     mail.quit()
     return "HELL0"
