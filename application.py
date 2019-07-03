@@ -246,6 +246,76 @@ def generatenumeric(sid,number):
     "version": "1.0"
 }'''
     return payload
+def generatedate(sid,number):
+    ques = engine.execute("SELECT question FROM surveyquestion WHERE sid = %s", sid)
+    question = ques.fetchall()
+    question = str(question[number])
+    question = question[2:len(question) - 3]
+    payload = '''{
+    "type": "AdaptiveCard",
+    "padding": "none",
+    "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
+    "body": [
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "verticalContentAlignment": "Center",
+                                    "horizontalAlignment": "Left",
+                                    "text": "**SURVEY**"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "padding": {
+                "top": "none",
+                "left": "default",
+                "bottom": "default",
+                "right": "default"
+            },
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "**'''+question+'''**",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Date",
+                    "id": "date"
+                },
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.Http",
+                            "title": "Next",
+                            "method": "POST",
+                            "body": "'''+sid+str(number+1)+'''",
+                            "url": "https://amcompose.azurewebsites.net/getsurveyquestion"                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.0"
+}'''
+    return payload
 @app.route("/startsurvey",methods=['POST'])
 def startsurvey():
     sid = request.data
@@ -259,6 +329,8 @@ def startsurvey():
         payload = generatetext(sid,0)
     if type == "2":
         payload = generatenumeric(sid,0)
+    if type == "3":
+        payload = generatedate(sid,0)
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
