@@ -27,6 +27,165 @@ engine = create_engine(
 @app.route("/")
 def hello():
     return "Hello A!"
+def generatetext(sid,number):
+    ques = engine.execute("SELECT question FROM surveyquestion WHERE sid = %s", sid)
+    question = ques.fetchall()
+    question = str(question[number])
+    question = question[2:len(question) - 3]
+    payload='''{
+    "type": "AdaptiveCard",
+    "padding": "none",
+    "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
+    "body": [
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "verticalContentAlignment": "Center",
+                                    "horizontalAlignment": "Left",
+                                    "text": "**SURVEY**"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "padding": {
+                "top": "none",
+                "left": "default",
+                "bottom": "default",
+                "right": "default"
+            },
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "**'''+question+'''**",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Text",
+                    "id": "input3",
+                    "isMultiline": true
+                },
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.Http",
+                            "title": "Next",
+                            "method": "POST",
+                            "body": "'''+sid+str(number+1)+'''",
+                            "url": "https://amcompose.azurewebsites.net/getsurveyquestion"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.0"
+}'''
+    return payload
+@app.route("/getsurveyquestion",methods=['POST'])
+def getsurveyquestion():
+    sidn=request.data
+    sidn = sidn.decode("utf-8")
+    number = sidn[len(sidn)-1]
+    sid = sidn[0:len(sidn)-1]
+    type = engine.execute("SELECT type FROM surveyquestion WHERE sid = %s", sid)
+    type = type.fetchall()
+    if int(number) == len(type):
+        payload = '''{
+        "type": "AdaptiveCard",
+        "padding": "none",
+        "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
+        "body": [
+            {
+                "type": "Container",
+                "style": "emphasis",
+                "items": [
+                    {
+                        "type": "ColumnSet",
+                        "columns": [
+                            {
+                                "type": "Column",
+                                "verticalContentAlignment": "Center",
+                                "items": [
+                                    {
+                                        "type": "TextBlock",
+                                        "verticalContentAlignment": "Center",
+                                        "horizontalAlignment": "Left",
+                                        "text": "**SURVEY**"
+                                    }
+                                ],
+                                "width": "stretch"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "Container",
+                "padding": {
+                    "top": "none",
+                    "left": "default",
+                    "bottom": "default",
+                    "right": "default"
+                },
+                "items": [
+                    {
+                        "type": "TextBlock",
+                        "text": "**Thank You! Survey Ended**",
+                        "wrap": true
+                    }
+                ]
+            }
+        ],
+        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+        "version": "1.0"
+    }'''
+        resp = Response(payload)
+        resp.headers['CARD-UPDATE-IN-BODY'] = True
+        resp.headers['Content-Type'] = 'application/json'
+        return resp
+    type = str(type[int(number)])
+    type = type[2:len(type) - 3]
+
+    if type == "1":
+        payload = generatetext(sid, int(number))
+    print(payload, file=sys.stdout)
+    resp = Response(payload)
+    resp.headers['CARD-UPDATE-IN-BODY'] = True
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+@app.route("/startsurvey",methods=['POST'])
+def startsurvey():
+    sid = request.data
+    sid = sid.decode("utf-8")
+    type = engine.execute("SELECT type FROM surveyquestion WHERE sid = %s", sid)
+    type = type.fetchall()
+    type = str(type[0])
+    type = type[2:len(type) - 3]
+    payload=""
+    if type == "1":
+        payload = generatetext(sid,0)
+    resp = Response(payload)
+    resp.headers['CARD-UPDATE-IN-BODY'] = True
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
 def generatesorry():
     payload="""{
     "type": "AdaptiveCard",
@@ -472,8 +631,8 @@ def test():
 def sendEmail():
     qid = request.data
     qid = qid.decode("utf-8")
-    me = "meganb@M365x331543.onmicrosoft.com"
-    you = "meganb@M365x331543.onmicrosoft.com"
+    me = "meganb@M365x813361.onmicrosoft.com"
+    you = "meganb@M365x813361.onmicrosoft.com"
     # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart('alternative')
     msg['Subject'] = "Responses Of Your Poll"
@@ -520,7 +679,7 @@ def sendEmail():
     mail = smtplib.SMTP('smtp.office365.com', 587)
     mail.ehlo()
     mail.starttls()
-    mail.login('meganb@M365x331543.onmicrosoft.com', 'mahgarg@2642')
+    mail.login('meganb@M365x813361.onmicrosoft.com', 'mahgarg@2642')
     mail.sendmail(me, you, msg.as_string())
     mail.quit()
     return "HELL0"
