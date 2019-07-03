@@ -316,6 +316,93 @@ def generatedate(sid,number):
     "version": "1.0"
 }'''
     return payload
+def generatechoice(sid,number):
+    ques = engine.execute("SELECT question FROM surveyquestion WHERE sid = %s", sid)
+    question = ques.fetchall()
+    question = str(question[number])
+    question = question[2:len(question) - 3]
+    parts = question.split('","')
+    Options = ""
+    for i in range(1,len(parts)-1):
+        Options += '''{
+                            "value": "'''+parts[i]+'''",
+                            "title": "'''+parts[i]+'''"
+                    },'''
+    Options += '''{
+                        "value": "''' + parts[len(parts)-1] + '''",
+                        "title": "''' + parts[len(parts)-1] + '''"
+                    }'''
+    payload='''{
+    "type": "AdaptiveCard",
+    "padding": "none",
+    "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
+    "body": [
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "verticalContentAlignment": "Center",
+                                    "horizontalAlignment": "Left",
+                                    "text": "**SURVEY**"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "padding": {
+                "top": "none",
+                "left": "default",
+                "bottom": "default",
+                "right": "default"
+            },
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "**'''+parts[0]+'''**",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.ChoiceSet",
+                    "isMultiSelect": false,
+                    "style": "expanded",
+                    "choices": ['''+Options+'''
+                    ]
+                    
+                },
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.Http",
+                            "title": "Next",
+                            "method": "POST",
+                            "body": "'''+sid+str(number+1)+'''",
+                            "url": "https://amcompose.azurewebsites.net/getsurveyquestion"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.0"
+}'''
+    return payload
+
 @app.route("/startsurvey",methods=['POST'])
 def startsurvey():
     sid = request.data
@@ -331,6 +418,8 @@ def startsurvey():
         payload = generatenumeric(sid,0)
     if type == "3":
         payload = generatedate(sid,0)
+    if type == "4":
+        payload = generatechoice(sid,0)
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
