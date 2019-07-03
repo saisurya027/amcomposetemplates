@@ -225,8 +225,7 @@ def generatenumeric(sid,number):
                     "type": "Input.Number",
                     "id": "input3",
                     "placeholder": "enter a number",
-                    "isMultiline": true,
-                    "value": "This will be the only thing different in questions"
+                    "isMultiline": true
                 },
                 {
                     "type": "ActionSet",
