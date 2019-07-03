@@ -168,6 +168,10 @@ def getsurveyquestion():
         payload = generatetext(sid, int(number))
     if type == "2":
         payload = generatenumeric(sid, int(number))
+    if type == "3":
+        payload = generatedate(sid,int(number))
+    if type == "4":
+        payload = generatechoice(sid,int(number))
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
