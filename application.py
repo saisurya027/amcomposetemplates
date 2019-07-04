@@ -28,7 +28,7 @@ def generatetext(sid,number):
     question = ques.fetchall()
     question = str(question[number])
     question = question[2:len(question) - 3]
-    payload=constants.surveyTextPayload(question,str(int(number)+1))
+    payload=constants.surveyTextPayload(question,sid+str(number+1))
     return payload
 
 @app.route("/getsurveyquestion",methods=['POST'])
