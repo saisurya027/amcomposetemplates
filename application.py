@@ -9,6 +9,8 @@ import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+import constants
+
 app = Flask(__name__)
 from sqlalchemy.engine import create_engine
 
@@ -26,73 +28,9 @@ def generatetext(sid,number):
     question = ques.fetchall()
     question = str(question[number])
     question = question[2:len(question) - 3]
-    payload='''{
-    "type": "AdaptiveCard",
-    "padding": "none",
-    "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
-    "body": [
-        {
-            "type": "Container",
-            "style": "emphasis",
-            "items": [
-                {
-                    "type": "ColumnSet",
-                    "columns": [
-                        {
-                            "type": "Column",
-                            "verticalContentAlignment": "Center",
-                            "items": [
-                                {
-                                    "type": "TextBlock",
-                                    "verticalContentAlignment": "Center",
-                                    "horizontalAlignment": "Left",
-                                    "text": "**SURVEY**"
-                                }
-                            ],
-                            "width": "stretch"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "Container",
-            "padding": {
-                "top": "none",
-                "left": "default",
-                "bottom": "default",
-                "right": "default"
-            },
-            "items": [
-                {
-                    "type": "TextBlock",
-                    "text": "**'''+question+'''**",
-                    "wrap": true
-                },
-                {
-                    "type": "Input.Text",
-                    "id": "input3",
-                    "isMultiline": true
-                },
-                {
-                    "type": "ActionSet",
-                    "actions": [
-                        {
-                            "type": "Action.Http",
-                            "title": "Next",
-                            "method": "POST",
-                            "body": "'''+sid+str(number+1)+'''",
-                            "url": "https://amcompose.azurewebsites.net/getsurveyquestion"
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
-    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-    "version": "1.0"
-}'''
+    payload=constants.surveyTextPayload(question,str(int(number)+1))
     return payload
+
 @app.route("/getsurveyquestion",methods=['POST'])
 def getsurveyquestion():
     sidn=request.data
