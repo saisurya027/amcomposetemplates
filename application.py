@@ -147,7 +147,7 @@ def generatebody(qid):
 def generateaction(qid):
     body = {constants.type: constants.Container, 'padding': {'left': 'padding', 'right': 'padding', 'bottom': 'padding'}, constants.items: []}
     actionbody = {constants.type: 'ActionSet', 'actions': []}
-    actionbodys = {'method': 'POST', 'body': '{{Poll.value}}#' + qid, 'title': 'Submit', 'isPrimary': True,
+    actionbodys = {'method': 'POST', constants.body: '{{Poll.value}}#' + qid, 'title': 'Submit', 'isPrimary': True,
                    constants.type: 'Action.Http'}
     responsevisibility = engine.execute("SELECT responsevisibility FROM survey WHERE sid = %s", qid)
     responsevisibility = responsevisibility.fetchall()
@@ -164,16 +164,16 @@ def generateaction(qid):
 
 def generatequestion(qid, expirytime):
     payload = {constants.type: 'AdaptiveCard', 'version': '1.0', 'padding': 'none',
-               'originator': '863402fa-7924-43fa-a7e1-47293462aaf4', 'body': [],
+               'originator': constants.Originator, constants.body: [],
                'autoInvokeAction': {'type': 'Action.Http', 'method': 'POST', 'hideCardOnInvoke': False, 'body': qid,
                                     'url': 'https://amcompose.azurewebsites.net/pollcard'}}
 
     header = generateheaderquestion(expirytime)
     bodyquestion = generatebody(qid)
     actionbody = generateaction(qid)
-    payload['body'].append(header)
-    payload['body'].append(bodyquestion)
-    payload['body'].append(actionbody)
+    payload[constants.body].append(header)
+    payload[constants.body].append(bodyquestion)
+    payload[constants.body].append(actionbody)
     payload = json.dumps(payload)
     payload = str(payload)
     return payload
@@ -182,7 +182,7 @@ def generatequestion(qid, expirytime):
 @app.route("/pollcard", methods=['POST', 'GET'])
 def pollcard():
     qid = request.data
-    qid = qid.decode("utf-8")
+    qid = qid.decode(constants.UTF8)
     x = datetime.datetime.now()
     date = x.strftime("%Y") + "-" + x.strftime("%m") + "-" + x.strftime("%d") + " " + x.strftime(
         "%H") + ":" + x.strftime("%M")
@@ -270,32 +270,32 @@ def generatestatistics(qid, question, Options, results):
 
 def generateRefreshButton(qid):
     button = {constants.type: 'ActionSet', 'actions': []}
-    buttonaction = {constants.type: 'Action.Http', 'method': 'POST',
-                    'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', 'body': qid,
+    buttonaction = {constants.type: 'Action.Http', constants.method: 'POST',
+                    'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', constants.body: qid,
                     'title': 'Get Latest Responses', 'isPrimary': True}
     button['actions'].append(buttonaction)
     return button
 
 
 def generatePayloadStatistics(qid, question, Options, results):
-    payload = {constants.type: 'AdaptiveCard', 'version': '1.0', 'padding': 'none',
-               'originator': '863402fa-7924-43fa-a7e1-47293462aaf4', 'body': []}
-    payload['body'].append(generateheader())
-    payload['body'].append(generatecount(qid, results))
-    payload['body'].append(generatestatistics(qid, question, Options, results))
-    payload['autoInvokeAction'] = {constants.type: 'Action.Http', 'method': 'POST', 'hideCardOnInvoke': False,
-                                   'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', 'body': qid}
-    payload['resources'] = {'actions': []}
-    resourceactions = {'id': 'inlineActionID', 'type': 'Action.Http', 'method': 'POST', 'title': 'Refresh',
-                       'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', 'body': qid}
-    payload['resources']['actions'].append(resourceactions)
+    payload = {constants.type: 'AdaptiveCard', constants.version: '1.0', 'padding': 'none',
+               constants.textOriginator: constants.Originator, constants.body: []}
+    payload[constants.body].append(generateheader())
+    payload[constants.body].append(generatecount(qid, results))
+    payload[constants.body].append(generatestatistics(qid, question, Options, results))
+    payload['autoInvokeAction'] = {constants.type: 'Action.Http', constants.method: 'POST', 'hideCardOnInvoke': False,
+                                   'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', constants.body: qid}
+    payload[constants.resources] = {constants.actions: []}
+    resourceactions = {'id': 'inlineActionID', constants.type: 'Action.Http', constants.method: 'POST', 'title': 'Refresh',
+                       'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', constants.body: qid}
+    payload[constants.resources][constants.actions].append(resourceactions)
     return payload
 
 
 @app.route("/submitResponseVisible", methods=['POST'])
 def submitResponseVisible():
     temp = request.data
-    temp = temp.decode("utf-8")
+    temp = temp.decode(constants.UTF8)
     lt = temp.split('#')
     response = lt[0]
     qid = lt[1]
@@ -311,7 +311,6 @@ def submitResponseVisible():
     question = str(name[0])
     for i in range(len(choices) - 1):
         result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid, choices[i]))
-        # r=r+choices[i]+"= "+ str(result.rowcount)
         r.append(result.rowcount)
     payload = generatePayloadStatistics(qid, question, choices, r)
     payload = json.dumps(payload)
@@ -325,7 +324,7 @@ def submitResponseVisible():
 @app.route("/submitResponse", methods=['POST'])
 def submitResponse():
     temp = request.data
-    temp = temp.decode("utf-8")
+    temp = temp.decode(constants.UTF8)
     lt = temp.split('#')
     response = lt[0]
     qid = lt[1]
@@ -344,7 +343,7 @@ def submitResponse():
 @app.route("/getResponses", methods=['POST'])
 def getResponses():
     qid = request.data
-    qid = qid.decode("utf-8")
+    qid = qid.decode(constants.UTF8)
     r = ""
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
     name = queryChoice.fetchall()
@@ -361,7 +360,7 @@ def getResponses():
 @app.route("/fetchLatestResponses", methods=['POST', 'GET'])
 def fetchLatestResponses():
     qid = request.data
-    qid = qid.decode("utf-8")
+    qid = qid.decode(constants.UTF8)
     r = []
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
     name = queryChoice.fetchall()
@@ -391,33 +390,7 @@ def sendEmail():
     msg['Subject'] = constants.emailSubject
     msg['From'] = "{}".format(constants.emailid)
     msg['To'] = "{}".format(constants.emailid)
-    html = """\
-    <html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script type="application/adaptivecard+json">{
-    "type": "AdaptiveCard",
-    "version": "1.0",
-    "originator": "863402fa-7924-43fa-a7e1-47293462aaf4",
-    "hideOriginalBody": true,
-    "body": [
-      {
-        "type": "TextBlock",
-        "text": "Results Will be Displayed Soon..."
-      }
-    ],
-    "autoInvokeAction": {
-        "type": "Action.Http",
-        "method": "POST",
-        "hideCardOnInvoke": false,
-        "url": "https://amcompose.azurewebsites.net/fetchLatestResponses",
-        "body": """ + "\"" + qid + "\"" + """
-    }
-  }
-  </script>
-</head>
-</html>
-    """
+    html = constants.emailhtml % (qid,)
     part2 = MIMEText(html, 'html')
     msg.attach(part2)
     mail = smtplib.SMTP(constants.emailServer, constants.emailPort)
