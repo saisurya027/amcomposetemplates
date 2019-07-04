@@ -38,7 +38,7 @@ surveyTextPayload = """{
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "**%s**",
+                    "text": "**?**",
                     "wrap": true
                 },
                 {
@@ -53,7 +53,7 @@ surveyTextPayload = """{
                             "type": "Action.Http",
                             "title": "Next",
                             "method": "POST",
-                            "body": "%s",
+                            "body": "?",
                             "url": "https://amcompose.azurewebsites.net/getsurveyquestion"
                         }
                     ]
