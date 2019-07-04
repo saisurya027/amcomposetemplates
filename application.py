@@ -513,7 +513,6 @@ def generateheaderquestion(expirytime):
     expiry = expiry.astimezone(pytz.timezone("Asia/Kolkata"))
     #expiry = expiry.replace(tzinfo=timezone('Asia/Kolkata'))
     expirytime = expiry.strftime('%a')+' '+expiry.strftime('%d')+' '+expiry.strftime('%b')+', '+expiry.strftime('%Y')+', '+expiry.strftime('%I')+':'+expiry.strftime('%M')+' '+expiry.strftime('%p')
-    print(expiry, file=sys.stdout)
     col2item2={'type': 'TextBlock', 'text': 'Due by '+expirytime, 'size': 'small',}
     col2['items'].append(col2item2)
     items['columns'].append(col2)
@@ -642,7 +641,6 @@ def generatestatistics(qid, question, Options, results):
         size = (300 * results[i]) / total
         size = int(size)
         sizes.append(size)
-    print(str(len(Options)), file=sys.stdout)
     for i in range(len(Options) - 1):
         items = {'type': 'TextBlock', 'text': Options[i]+' - '+str(results[i])+'/'+str(total), 'size': 'Large', 'wrap': True}
         stats['items'].append(items)
@@ -761,7 +759,6 @@ def submitResponseVisible():
     r = []
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
     name = queryChoice.fetchall()
-    print(str(name[0]), file=sys.stdout)
     choices = str(name[0]).split(',')
     choices[0] = choices[0][2:]
     choices[len(choices) - 2] = choices[len(choices) - 2][:len(choices[len(choices) - 2]) - 1]
@@ -775,7 +772,6 @@ def submitResponseVisible():
     payload = generatePayload2(qid, question, choices, r)
     payload = json.dumps(payload)
     payload = str(payload)
-    print(str(payload), file=sys.stdout)
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
@@ -824,7 +820,6 @@ def fetchLatestResponses():
     r = []
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
     name = queryChoice.fetchall()
-    print(str(name[0]), file=sys.stdout)
     choices = str(name[0]).split(',')
     choices[0] = choices[0][2:]
     choices[len(choices) - 2] = choices[len(choices) - 2][:len(choices[len(choices) - 2]) - 1]
@@ -856,7 +851,6 @@ def fetchLatestResponses():
 @app.route("/test", methods=['POST'])
 def test():
     qid = request.data
-
     qid = qid.decode("utf-8")
     queryChoice = engine.execute("SELECT count FROM receipients WHERE qid = %s", qid)
     name = queryChoice.fetchall()
