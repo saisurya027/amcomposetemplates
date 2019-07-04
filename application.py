@@ -23,20 +23,22 @@ engine = create_engine(
 def hello():
     return "Hello World!"
 
-def generatetext(sid,number):
+
+def generatetext(sid, number):
     ques = engine.execute("SELECT question FROM surveyquestion WHERE sid = %s", sid)
     question = ques.fetchall()
     question = str(question[number])
     question = question[2:len(question) - 3]
-    payload=constants.surveyTextPayload(question,sid+str(number+1))
+    payload = constants.surveyTextPayload(question, sid + str(number + 1))
     return payload
 
-@app.route("/getsurveyquestion",methods=['POST'])
+
+@app.route("/getsurveyquestion", methods=['POST'])
 def getsurveyquestion():
-    sidn=request.data
+    sidn = request.data
     sidn = sidn.decode("utf-8")
-    number = sidn[len(sidn)-1]
-    sid = sidn[0:len(sidn)-1]
+    number = sidn[len(sidn) - 1]
+    sid = sidn[0:len(sidn) - 1]
     type = engine.execute("SELECT type FROM surveyquestion WHERE sid = %s", sid)
     type = type.fetchall()
     if int(number) == len(type):
@@ -95,21 +97,22 @@ def getsurveyquestion():
         return resp
     type = str(type[int(number)])
     type = type[2:len(type) - 3]
-    payload=""
+    payload = ""
     if type == "1":
         payload = generatetext(sid, int(number))
     if type == "2":
         payload = generatenumeric(sid, int(number))
     if type == "3":
-        payload = generatedate(sid,int(number))
+        payload = generatedate(sid, int(number))
     if type == "4":
-        payload = generatechoice(sid,int(number))
+        payload = generatechoice(sid, int(number))
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
-def generatenumeric(sid,number):
+
+def generatenumeric(sid, number):
     ques = engine.execute("SELECT question FROM surveyquestion WHERE sid = %s", sid)
     question = ques.fetchall()
     question = str(question[number])
@@ -154,7 +157,7 @@ def generatenumeric(sid,number):
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "**'''+question+'''**",
+                    "text": "**''' + question + '''**",
                     "wrap": true
                 },
                 {
@@ -170,7 +173,7 @@ def generatenumeric(sid,number):
                             "type": "Action.Http",
                             "title": "Next",
                             "method": "POST",
-                            "body": "'''+sid+str(number+1)+'''",
+                            "body": "''' + sid + str(number + 1) + '''",
                             "url": "https://amcompose.azurewebsites.net/getsurveyquestion"
                         }
                     ]
@@ -182,7 +185,9 @@ def generatenumeric(sid,number):
     "version": "1.0"
 }'''
     return payload
-def generatedate(sid,number):
+
+
+def generatedate(sid, number):
     ques = engine.execute("SELECT question FROM surveyquestion WHERE sid = %s", sid)
     question = ques.fetchall()
     question = str(question[number])
@@ -227,7 +232,7 @@ def generatedate(sid,number):
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "**'''+question+'''**",
+                    "text": "**''' + question + '''**",
                     "wrap": true
                 },
                 {
@@ -241,7 +246,7 @@ def generatedate(sid,number):
                             "type": "Action.Http",
                             "title": "Next",
                             "method": "POST",
-                            "body": "'''+sid+str(number+1)+'''",
+                            "body": "''' + sid + str(number + 1) + '''",
                             "url": "https://amcompose.azurewebsites.net/getsurveyquestion"                        }
                     ]
                 }
@@ -252,23 +257,25 @@ def generatedate(sid,number):
     "version": "1.0"
 }'''
     return payload
-def generatechoice(sid,number):
+
+
+def generatechoice(sid, number):
     ques = engine.execute("SELECT question FROM surveyquestion WHERE sid = %s", sid)
     question = ques.fetchall()
     question = str(question[number])
     question = question[2:len(question) - 3]
     parts = question.split('","')
     Options = ""
-    for i in range(1,len(parts)-1):
+    for i in range(1, len(parts) - 1):
         Options += '''{
-                            "value": "'''+parts[i]+'''",
-                            "title": "'''+parts[i]+'''"
+                            "value": "''' + parts[i] + '''",
+                            "title": "''' + parts[i] + '''"
                     },'''
     Options += '''{
-                        "value": "''' + parts[len(parts)-1] + '''",
-                        "title": "''' + parts[len(parts)-1] + '''"
+                        "value": "''' + parts[len(parts) - 1] + '''",
+                        "title": "''' + parts[len(parts) - 1] + '''"
                     }'''
-    payload='''{
+    payload = '''{
     "type": "AdaptiveCard",
     "padding": "none",
     "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
@@ -308,14 +315,14 @@ def generatechoice(sid,number):
             "items": [
                 {
                     "type": "TextBlock",
-                    "text": "**'''+parts[0]+'''**",
+                    "text": "**''' + parts[0] + '''**",
                     "wrap": true
                 },
                 {
                     "type": "Input.ChoiceSet",
                     "isMultiSelect": false,
                     "style": "expanded",
-                    "choices": ['''+Options+'''
+                    "choices": [''' + Options + '''
                     ]
                     
                 },
@@ -326,7 +333,7 @@ def generatechoice(sid,number):
                             "type": "Action.Http",
                             "title": "Next",
                             "method": "POST",
-                            "body": "'''+sid+str(number+1)+'''",
+                            "body": "''' + sid + str(number + 1) + '''",
                             "url": "https://amcompose.azurewebsites.net/getsurveyquestion"
                         }
                     ]
@@ -339,7 +346,8 @@ def generatechoice(sid,number):
 }'''
     return payload
 
-@app.route("/startsurvey",methods=['POST'])
+
+@app.route("/startsurvey", methods=['POST'])
 def startsurvey():
     sid = request.data
     sid = sid.decode("utf-8")
@@ -347,21 +355,23 @@ def startsurvey():
     type = type.fetchall()
     type = str(type[0])
     type = type[2:len(type) - 3]
-    payload=""
+    payload = ""
     if type == "1":
-        payload = generatetext(sid,0)
+        payload = generatetext(sid, 0)
     if type == "2":
-        payload = generatenumeric(sid,0)
+        payload = generatenumeric(sid, 0)
     if type == "3":
-        payload = generatedate(sid,0)
+        payload = generatedate(sid, 0)
     if type == "4":
-        payload = generatechoice(sid,0)
+        payload = generatechoice(sid, 0)
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
     return resp
+
+
 def generatesorry():
-    payload="""{
+    payload = """{
     "type": "AdaptiveCard",
     "version": "1.0",
     "padding": "none",
@@ -429,6 +439,8 @@ def generatesorry():
     ]
 }"""
     return payload
+
+
 def generateheaderquestion(expirytime):
     header = {'type': 'Container', 'style': 'emphasis', 'items': []}
     items = {'type': 'ColumnSet', 'columns': []}
@@ -441,56 +453,67 @@ def generateheaderquestion(expirytime):
     col2 = {'width': 'stretch', 'type': 'Column', 'bleed': False, 'items': []}
     col2item = {'type': 'TextBlock', 'text': 'Quick Poll', 'size': 'Large', 'height': 'stretch'}
     col2['items'].append(col2item)
-    expiry=datetime.datetime.strptime(expirytime,'%Y-%m-%d %H:%M')
+    expiry = datetime.datetime.strptime(expirytime, '%Y-%m-%d %H:%M')
     expiry = expiry.astimezone(pytz.timezone("Asia/Kolkata"))
-    #expiry = expiry.replace(tzinfo=timezone('Asia/Kolkata'))
-    expirytime = expiry.strftime('%a')+' '+expiry.strftime('%d')+' '+expiry.strftime('%b')+', '+expiry.strftime('%Y')+', '+expiry.strftime('%I')+':'+expiry.strftime('%M')+' '+expiry.strftime('%p')
-    col2item2={'type': 'TextBlock', 'text': 'Due by '+expirytime, 'size': 'small',}
+    # expiry = expiry.replace(tzinfo=timezone('Asia/Kolkata'))
+    expirytime = expiry.strftime('%a') + ' ' + expiry.strftime('%d') + ' ' + expiry.strftime(
+        '%b') + ', ' + expiry.strftime('%Y') + ', ' + expiry.strftime('%I') + ':' + expiry.strftime(
+        '%M') + ' ' + expiry.strftime('%p')
+    col2item2 = {'type': 'TextBlock', 'text': 'Due by ' + expirytime, 'size': 'small', }
     col2['items'].append(col2item2)
     items['columns'].append(col2)
     header['items'].append(items)
     return header
+
+
 def generatebody(qid):
-    body = {'type':'Container','padding':{'left':'padding','right':'padding'},'items':[]}
+    body = {'type': 'Container', 'padding': {'left': 'padding', 'right': 'padding'}, 'items': []}
     ques = engine.execute("SELECT ques FROM question WHERE qid = %s", qid)
     question = ques.fetchall()
     question = str(question[0])
     question = question[2:len(question) - 3]
-    questionbody = {'text':'**'+question+'**','wrap':True,'type':'TextBlock','separator':True}
+    questionbody = {'text': '**' + question + '**', 'wrap': True, 'type': 'TextBlock', 'separator': True}
     body['items'].append(questionbody)
-    choice={'id':'Poll','type':'Input.ChoiceSet','style':'expanded','isMultiSelect':False,'choices':[]}
+    choice = {'id': 'Poll', 'type': 'Input.ChoiceSet', 'style': 'expanded', 'isMultiSelect': False, 'choices': []}
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
     name = queryChoice.fetchall()
     choices = str(name[0]).split(',')
     choices[0] = choices[0][2:]
     choices[len(choices) - 2] = choices[len(choices) - 2][:len(choices[len(choices) - 2]) - 1]
     for i in range(len(choices) - 1):
-        option={'title':choices[i],'value':choices[i]}
+        option = {'title': choices[i], 'value': choices[i]}
         choice['choices'].append(option)
     body['items'].append(choice)
     return body
+
+
 def generateaction(qid):
-    body={'type':'Container','padding':{'left':'padding','right':'padding','bottom':'padding'},'items':[]}
-    actionbody = {'type':'ActionSet','actions':[]}
-    actionbodys={'method':'POST','body':'{{Poll.value}}#'+qid,'title':'Submit','isPrimary':True,'type':'Action.Http'}
+    body = {'type': 'Container', 'padding': {'left': 'padding', 'right': 'padding', 'bottom': 'padding'}, 'items': []}
+    actionbody = {'type': 'ActionSet', 'actions': []}
+    actionbodys = {'method': 'POST', 'body': '{{Poll.value}}#' + qid, 'title': 'Submit', 'isPrimary': True,
+                   'type': 'Action.Http'}
     responsevisibility = engine.execute("SELECT responsevisibility FROM survey WHERE sid = %s", qid)
     responsevisibility = responsevisibility.fetchall()
     responsevisibility = str(responsevisibility[0])
     responsevisibility = responsevisibility[2:len(responsevisibility) - 3]
-    if(responsevisibility=="1"):
-        actionbodys['url']='https://amcompose.azurewebsites.net/submitResponse'
+    if (responsevisibility == "1"):
+        actionbodys['url'] = 'https://amcompose.azurewebsites.net/submitResponse'
     else:
-        actionbodys['url']='https://amcompose.azurewebsites.net/submitResponseVisible'
+        actionbodys['url'] = 'https://amcompose.azurewebsites.net/submitResponseVisible'
     actionbody['actions'].append(actionbodys)
     body['items'].append(actionbody)
     return body
-def generatequestion(qid,expirytime):
-    payload = {'type': 'AdaptiveCard', 'version': '1.0', 'padding': 'none',
-               'originator': '863402fa-7924-43fa-a7e1-47293462aaf4', 'body': [],'autoInvokeAction':{'type':'Action.Http','method':'POST','hideCardOnInvoke':False,'body':qid,'url':'https://amcompose.azurewebsites.net/pollcard'}}
 
-    header=generateheaderquestion(expirytime)
+
+def generatequestion(qid, expirytime):
+    payload = {'type': 'AdaptiveCard', 'version': '1.0', 'padding': 'none',
+               'originator': '863402fa-7924-43fa-a7e1-47293462aaf4', 'body': [],
+               'autoInvokeAction': {'type': 'Action.Http', 'method': 'POST', 'hideCardOnInvoke': False, 'body': qid,
+                                    'url': 'https://amcompose.azurewebsites.net/pollcard'}}
+
+    header = generateheaderquestion(expirytime)
     bodyquestion = generatebody(qid)
-    actionbody=generateaction(qid)
+    actionbody = generateaction(qid)
     payload['body'].append(header)
     payload['body'].append(bodyquestion)
     payload['body'].append(actionbody)
@@ -498,25 +521,28 @@ def generatequestion(qid,expirytime):
     payload = str(payload)
     return payload
 
-@app.route("/pollcard", methods=['POST','GET'])
+
+@app.route("/pollcard", methods=['POST', 'GET'])
 def pollcard():
     qid = request.data
     qid = qid.decode("utf-8")
-    x=datetime.datetime.now()
-    date = x.strftime("%Y")+"-"+x.strftime("%m")+"-"+x.strftime("%d")+" "+x.strftime("%H")+":"+x.strftime("%M")
+    x = datetime.datetime.now()
+    date = x.strftime("%Y") + "-" + x.strftime("%m") + "-" + x.strftime("%d") + " " + x.strftime(
+        "%H") + ":" + x.strftime("%M")
     expirytime = engine.execute("SELECT expirytime FROM survey WHERE sid = %s", qid)
     expirytime = expirytime.fetchall()
     expirytime = str(expirytime[0])
     expirytime = expirytime[2:len(expirytime) - 3]
-    payload=""
-    if(expirytime>=date):
-        payload=generatequestion(qid,expirytime)
+    payload = ""
+    if (expirytime >= date):
+        payload = generatequestion(qid, expirytime)
     else:
-        payload=generatesorry()
+        payload = generatesorry()
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
     return resp
+
 
 def generateheader():
     header = {'type': 'Container', 'style': 'emphasis', 'items': []}
@@ -532,7 +558,8 @@ def generateheader():
     col2['items'].append(col2item)
     items['columns'].append(col2)
     col3 = {'width': 'auto', 'type': 'Column', 'bleed': False, 'items': []}
-    col3items = {'type': 'TextBlock', 'text': '[Refresh](action:inlineActionID)', 'size': 'Large', 'color': 'accent', 'height': 'stretch'}
+    col3items = {'type': 'TextBlock', 'text': '[Refresh](action:inlineActionID)', 'size': 'Large', 'color': 'accent',
+                 'height': 'stretch'}
     col3['items'].append(col3items)
     items['columns'].append(col3)
     header['items'].append(items)
@@ -574,7 +601,8 @@ def generatestatistics(qid, question, Options, results):
         size = int(size)
         sizes.append(size)
     for i in range(len(Options) - 1):
-        items = {'type': 'TextBlock', 'text': Options[i]+' - '+str(results[i])+'/'+str(total), 'size': 'Large', 'wrap': True}
+        items = {'type': 'TextBlock', 'text': Options[i] + ' - ' + str(results[i]) + '/' + str(total), 'size': 'Large',
+                 'wrap': True}
         stats['items'].append(items)
         titems = {'type': 'Image', 'spacing': 'none', 'padding': 'none', 'padding': 'none', 'height': '25px',
                   'url': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAQCAYAAADj5tSrAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADeSURBVDhPtc1NCsIwEAXgWWrtj3oBb+ARvJl/bQU9hu5cegdXrhRc2IrYeggtgjwTmmCNKZJFFh/vEWYmVDwL2EabXQLbaDBcwzbqjbawjYIwgW3kRhfYRl50BueLlNxY37nqrLrnafbYJykrqRiWvcyq6tv3bF3/JDXjK0oZmjO1s6ztLGX/s8c+ubFSasz+dJ5Kd2RXZyudWmEGlRvlaDE86zrPr66544ikbpjjxzRDxwCf194RqD1JoArGJ2O6OxJ58z1U/uJgTHdHov7yCNto9XhBtbyb090pvfAGnMoj2pIEjCsAAAAASUVORK5CYII=',
@@ -584,11 +612,16 @@ def generatestatistics(qid, question, Options, results):
         stats['items'].append(titems)
     return stats
 
+
 def generateRefreshButton(qid):
-    button={'type':'ActionSet','actions':[]}
-    buttonaction={'type':'Action.Http','method':'POST','url':'https://amcompose.azurewebsites.net/fetchLatestResponses','body':qid,'title':'Get Latest Responses','isPrimary':True}
+    button = {'type': 'ActionSet', 'actions': []}
+    buttonaction = {'type': 'Action.Http', 'method': 'POST',
+                    'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', 'body': qid,
+                    'title': 'Get Latest Responses', 'isPrimary': True}
     button['actions'].append(buttonaction)
     return button
+
+
 def generatePayload2(qid, question, Options, results):
     payload = {'type': 'AdaptiveCard', 'version': '1.0', 'padding': 'none',
                'originator': '863402fa-7924-43fa-a7e1-47293462aaf4', 'body': []}
@@ -597,8 +630,9 @@ def generatePayload2(qid, question, Options, results):
     payload['body'].append(generatestatistics(qid, question, Options, results))
     payload['autoInvokeAction'] = {'type': 'Action.Http', 'method': 'POST', 'hideCardOnInvoke': False,
                                    'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', 'body': qid}
-    payload['resources']={'actions':[]}
-    resourceactions={'id':'inlineActionID','type':'Action.Http','method':'POST','title':'Refresh','url':'https://amcompose.azurewebsites.net/fetchLatestResponses','body':qid}
+    payload['resources'] = {'actions': []}
+    resourceactions = {'id': 'inlineActionID', 'type': 'Action.Http', 'method': 'POST', 'title': 'Refresh',
+                       'url': 'https://amcompose.azurewebsites.net/fetchLatestResponses', 'body': qid}
     payload['resources']['actions'].append(resourceactions)
     return payload
 
@@ -680,6 +714,7 @@ def generatePayload(question, response):
         """
     return payload
 
+
 @app.route("/submitResponseVisible", methods=['POST'])
 def submitResponseVisible():
     temp = request.data
@@ -708,6 +743,7 @@ def submitResponseVisible():
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
     return resp
+
 
 @app.route("/submitResponse", methods=['POST'])
 def submitResponse():
@@ -828,7 +864,7 @@ def sendEmail():
         "method": "POST",
         "hideCardOnInvoke": false,
         "url": "https://amcompose.azurewebsites.net/fetchLatestResponses",
-        "body": """+"\""+qid+"\""+"""
+        "body": """ + "\"" + qid + "\"" + """
     }
   }
   </script>
@@ -851,6 +887,7 @@ def sendEmail():
     mail.sendmail(me, you, msg.as_string())
     mail.quit()
     return "HELL0"
+
 
 @app.route("/getHtmlTemplate", methods=['GET'])
 def getHtml():

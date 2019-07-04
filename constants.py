@@ -1,4 +1,4 @@
-surveyTextPayload = '''{
+surveyTextPayload = """{
     "type": "AdaptiveCard",
     "padding": "none",
     "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
@@ -63,4 +63,4 @@ surveyTextPayload = '''{
     ],
     "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
     "version": "1.0"
-}'''
+}"""
