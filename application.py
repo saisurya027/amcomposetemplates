@@ -109,15 +109,14 @@ def generateheaderquestion(expirytime):
     col1[constants.items].append(col1item)
     items[constants.columns].append(col1)
     col2 = {constants.width: 'stretch', constants.type: constants.Column, constants.bleed: False, constants.items: []}
-    col2item = {constants.type: 'TextBlock', 'text': 'Quick Poll', 'size': 'Large', 'height': 'stretch'}
+    col2item = {constants.type: constants.TextBlock, constants.text: 'Quick Poll', constants.size: 'Large', 'height': 'stretch'}
     col2[constants.items].append(col2item)
     expiry = datetime.datetime.strptime(expirytime, '%Y-%m-%d %H:%M')
     expiry = expiry.astimezone(pytz.timezone("Asia/Kolkata"))
-    # expiry = expiry.replace(tzinfo=timezone('Asia/Kolkata'))
     expirytime = expiry.strftime('%a') + ' ' + expiry.strftime('%d') + ' ' + expiry.strftime(
         '%b') + ', ' + expiry.strftime('%Y') + ', ' + expiry.strftime('%I') + ':' + expiry.strftime(
         '%M') + ' ' + expiry.strftime('%p')
-    col2item2 = {constants.type: 'TextBlock', 'text': 'Due by ' + expirytime, 'size': 'small', }
+    col2item2 = {constants.type: constants.TextBlock, constants.text: 'Due by ' + expirytime, 'size': 'small', }
     col2[constants.items].append(col2item2)
     items[constants.columns].append(col2)
     header[constants.items].append(items)
@@ -130,7 +129,7 @@ def generatebody(qid):
     question = ques.fetchall()
     question = str(question[0])
     question = question[2:len(question) - 3]
-    questionbody = {'text': '**' + question + '**', 'wrap': True, 'type': 'TextBlock', 'separator': True}
+    questionbody = {constants.text: '**' + question + '**', 'wrap': True, 'type': constants.TextBlock, 'separator': True}
     body[constants.items].append(questionbody)
     choice = {'id': 'Poll', 'type': 'Input.ChoiceSet', constants.style: 'expanded', 'isMultiSelect': False, 'choices': []}
     queryChoice = engine.execute("SELECT choice FROM question WHERE qid = %s", qid)
@@ -210,11 +209,11 @@ def generateheader():
     col1[constants.items].append(col1item)
     items[constants.columns].append(col1)
     col2 = {constants.width: 'stretch', constants.type: constants.Column, constants.bleed: False, constants.items: []}
-    col2item = {constants.type: 'TextBlock', 'text': 'Quick Poll', 'size': 'Large', 'height': 'stretch'}
+    col2item = {constants.type: constants.TextBlock, constants.text: 'Quick Poll', constants.size: 'Large', 'height': 'stretch'}
     col2[constants.items].append(col2item)
     items[constants.columns].append(col2)
     col3 = {constants.width: 'auto', 'type': constants.Column, constants.bleed: False, constants.items: []}
-    col3items = {constants.type: 'TextBlock', 'text': '[Refresh](action:inlineActionID)', 'size': 'Large', 'color': 'accent',
+    col3items = {constants.type: constants.TextBlock, constants.text: '[Refresh](action:inlineActionID)', constants.size: 'Large', 'color': 'accent',
                  'height': 'stretch'}
     col3[constants.items].append(col3items)
     items[constants.columns].append(col3)
@@ -226,7 +225,7 @@ def generatecount(qid, results):
     countresult = {constants.type: constants.Container, 'separator': 'true', 'spacing': 'none',
                    'padding': {'right': 'padding', 'left': 'padding', 'bottom': 'padding', 'top': 'padding'},
                    constants.items: []}
-    item = {constants.type: 'TextBlock', 'size': 'Large', 'wrap': True}
+    item = {constants.type: constants.TextBlock, constants.size: 'Large', 'wrap': True}
     count = 0
     for i in range(len(results)):
         count = count + results[i]
@@ -235,7 +234,7 @@ def generatecount(qid, results):
 
     tcount = str(tcount[0])[1:len(tcount[0]) - 3]
     total = int(tcount)
-    item['text'] = str(count) + ' out of ' + str(total) + ' people have responded'
+    item[constants.text] = str(count) + ' out of ' + str(total) + ' people have responded'
     countresult[constants.items].append(item)
     return countresult
 
@@ -245,7 +244,7 @@ def generatestatistics(qid, question, Options, results):
     question = "**" + question + "**"
     stats = {constants.type: constants.Container, 'separator': 'true', 'spacing': 'none',
              'padding': {'right': 'padding', 'left': 'padding', 'bottom': 'padding', 'top': 'padding'}, constants.items: []}
-    items1 = {constants.type: 'TextBlock', 'text': question, 'size': 'Large', 'wrap': True}
+    items1 = {constants.type: constants.TextBlock, constants.text: question, constants.size: 'Large', 'wrap': True}
     stats[constants.items].append(items1)
     sizes = []
     queryCount = engine.execute("SELECT count FROM receipients WHERE qid = %s", qid)
@@ -257,7 +256,7 @@ def generatestatistics(qid, question, Options, results):
         size = int(size)
         sizes.append(size)
     for i in range(len(Options) - 1):
-        items = {constants.type: 'TextBlock', 'text': Options[i] + ' - ' + str(results[i]) + '/' + str(total), 'size': 'Large',
+        items = {constants.type: constants.TextBlock, constants.text: Options[i] + ' - ' + str(results[i]) + '/' + str(total), constants.size: 'Large',
                  'wrap': True}
         stats[constants.items].append(items)
         titems = {constants.type: constants.Image, 'spacing': 'none', 'padding': 'none', 'padding': 'none', 'height': '25px',
@@ -413,7 +412,7 @@ def submitResponse():
     question = ques.fetchall()
     question = str(question[0])
     question = question[2:len(question) - 3]
-    payload = generatePayload(question, response)
+    payload = constants.responsepayload % (question, response,)
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
