@@ -94,7 +94,7 @@ def generatechoice(sid, number):
     Options = ""
     for i in range(1, len(parts) - 1):
         Options += constants.choiceOptionWithComma % (parts[i],parts[i],)
-    Options += constants.choiceOptionWithoutComma % (parts[i],parts[i],)
+    Options += constants.choiceOptionWithoutComma % (parts[len(parts)-1],parts[len(parts)-1],)
     body = sid + str(number + 1)
     payload = constants.surveyChoicePayload % (parts[0], Options , body)
     return payload
