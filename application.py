@@ -37,61 +37,13 @@ def generatetext(sid, number):
 @app.route("/getsurveyquestion", methods=['POST'])
 def getsurveyquestion():
     sidn = request.data
-    sidn = sidn.decode("utf-8")
+    sidn = sidn.decode(constants.UTF8)
     number = sidn[len(sidn) - 1]
     sid = sidn[0:len(sidn) - 1]
-    type = engine.execute("SELECT type FROM surveyquestion WHERE sid = %s", sid)
+    type = engine.execute(constants.queryTypeSurvey, sid)
     type = type.fetchall()
     if int(number) == len(type):
-        payload = '''{
-        "type": "AdaptiveCard",
-        "padding": "none",
-        "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
-        "body": [
-            {
-                "type": "Container",
-                "style": "emphasis",
-                "items": [
-                    {
-                        "type": "ColumnSet",
-                        "columns": [
-                            {
-                                "type": "Column",
-                                "verticalContentAlignment": "Center",
-                                "items": [
-                                    {
-                                        "type": "TextBlock",
-                                        "verticalContentAlignment": "Center",
-                                        "horizontalAlignment": "Left",
-                                        "text": "**SURVEY**"
-                                    }
-                                ],
-                                "width": "stretch"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "type": "Container",
-                "padding": {
-                    "top": "none",
-                    "left": "default",
-                    "bottom": "default",
-                    "right": "default"
-                },
-                "items": [
-                    {
-                        "type": "TextBlock",
-                        "text": "**Thank You! Survey Ended**",
-                        "wrap": true
-                    }
-                ]
-            }
-        ],
-        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-        "version": "1.0"
-    }'''
+        payload = constants.endCardSurvey
         resp = Response(payload)
         resp.headers['CARD-UPDATE-IN-BODY'] = True
         resp.headers['Content-Type'] = 'application/json'
@@ -99,13 +51,13 @@ def getsurveyquestion():
     type = str(type[int(number)])
     type = type[2:len(type) - 3]
     payload = ""
-    if type == "1":
+    if type == constants.surveyTextCode:
         payload = generatetext(sid, int(number))
-    if type == "2":
+    if type == constants.surveyNumericCode:
         payload = generatenumeric(sid, int(number))
-    if type == "3":
+    if type == constants.surveyDateCode:
         payload = generatedate(sid, int(number))
-    if type == "4":
+    if type == constants.surveyChoiceCode:
         payload = generatechoice(sid, int(number))
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
