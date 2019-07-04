@@ -486,3 +486,8 @@ responsepayload = """{
         ]
     }
         """
+emailid = "meganb@M365x331543.onmicrosoft.com"
+passwd = "mahgarg@2642"
+emailSubject = "Responses Of Your Poll"
+emailServer = "smtp.office365.com"
+emailPort = 587

@@ -277,7 +277,7 @@ def generateRefreshButton(qid):
     return button
 
 
-def generatePayload2(qid, question, Options, results):
+def generatePayloadStatistics(qid, question, Options, results):
     payload = {constants.type: 'AdaptiveCard', 'version': '1.0', 'padding': 'none',
                'originator': '863402fa-7924-43fa-a7e1-47293462aaf4', 'body': []}
     payload['body'].append(generateheader())
@@ -313,7 +313,7 @@ def submitResponseVisible():
         result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid, choices[i]))
         # r=r+choices[i]+"= "+ str(result.rowcount)
         r.append(result.rowcount)
-    payload = generatePayload2(qid, question, choices, r)
+    payload = generatePayloadStatistics(qid, question, choices, r)
     payload = json.dumps(payload)
     payload = str(payload)
     resp = Response(payload)
@@ -374,7 +374,7 @@ def fetchLatestResponses():
     for i in range(len(choices) - 1):
         result = engine.execute("SELECT * FROM responses WHERE qid = %s and response= %s", (qid, choices[i]))
         r.append(result.rowcount)
-    payload = generatePayload2(qid, question, choices, r)
+    payload = generatePayloadStatistics(qid, question, choices, r)
     payload = json.dumps(payload)
     payload = str(payload)
     resp = Response(payload)
@@ -387,15 +387,10 @@ def fetchLatestResponses():
 def sendEmail():
     qid = request.data
     qid = qid.decode(constants.UTF8)
-    me = "meganb@M365x813361.onmicrosoft.com"
-    you = "meganb@M365x813361.onmicrosoft.com"
-    # Create message container - the correct MIME type is multipart/alternative.
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = "Responses Of Your Poll"
-    msg['From'] = "{}".format(me)
-    msg['To'] = "{}".format(you)
-    # Create the body of the message (a plain-text and an HTML version).
-    text = "Hi!\nHow are you?\nHere is the link you wanted:\nhttp://www.python.org"
+    msg['Subject'] = constants.emailSubject
+    msg['From'] = "{}".format(constants.emailid)
+    msg['To'] = "{}".format(constants.emailid)
     html = """\
     <html>
 <head>
@@ -423,20 +418,13 @@ def sendEmail():
 </head>
 </html>
     """
-    # Record the MIME types of both parts - text/plain and text/html.
-    part1 = MIMEText(text, 'plain')
     part2 = MIMEText(html, 'html')
-    # Attach parts into message container.
-    # According to RFC 2046, the last part of a multipart message, in this case
-    # the HTML message, is best and preferred.
-    msg.attach(part1)
     msg.attach(part2)
-    # Send the message via local SMTP server.
-    mail = smtplib.SMTP('smtp.office365.com', 587)
+    mail = smtplib.SMTP(constants.emailServer, constants.emailPort)
     mail.ehlo()
     mail.starttls()
-    mail.login('meganb@M365x813361.onmicrosoft.com', 'mahgarg@2642')
-    mail.sendmail(me, you, msg.as_string())
+    mail.login(constants.emailid, constants.passwd)
+    mail.sendmail(constants.emailid, constants.emailid, msg.as_string())
     mail.quit()
     return "HELL0"
 
