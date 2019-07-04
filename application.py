@@ -30,7 +30,7 @@ def generatetext(sid, number):
     question = str(question[number])
     question = question[2:len(question) - 3]
     body = sid + str(number+1)
-    payload = constants.surveyTextPayload(question, body)
+    payload = constants.surveyTextPayload % (question, body,)
     return payload
 
 
