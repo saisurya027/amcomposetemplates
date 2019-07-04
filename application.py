@@ -100,29 +100,6 @@ def generatechoice(sid, number):
     return payload
 
 
-@app.route("/startsurvey", methods=['POST'])
-def startsurvey():
-    sid = request.data
-    sid = sid.decode(constants.UTF8)
-    type = engine.execute(constants.queryTypeSurvey, sid)
-    type = type.fetchall()
-    type = str(type[0])
-    type = type[2:len(type) - 3]
-    payload = ""
-    if type == constants.surveyTextCode:
-        payload = generatetext(sid, 0)
-    if type == constants.surveyNumericCode:
-        payload = generatenumeric(sid, 0)
-    if type == constants.surveyDateCode:
-        payload = generatedate(sid, 0)
-    if type == constants.surveyChoiceCode:
-        payload = generatechoice(sid, 0)
-    resp = Response(payload)
-    resp.headers['CARD-UPDATE-IN-BODY'] = True
-    resp.headers['Content-Type'] = 'application/json'
-    return resp
-
-
 def generatesorry():
     payload = """{
     "type": "AdaptiveCard",
@@ -286,11 +263,10 @@ def pollcard():
     expirytime = expirytime.fetchall()
     expirytime = str(expirytime[0])
     expirytime = expirytime[2:len(expirytime) - 3]
-    payload = ""
-    if (expirytime >= date):
+    if expirytime >= date:
         payload = generatequestion(qid, expirytime)
     else:
-        payload = generatesorry()
+        payload = constants.sorryPayload
     resp = Response(payload)
     resp.headers['CARD-UPDATE-IN-BODY'] = True
     resp.headers['Content-Type'] = 'application/json'
