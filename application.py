@@ -1,18 +1,11 @@
 import pytz
-from flask import Flask, request, url_for, redirect
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, request
 import urllib.parse
-from sqlalchemy import create_engine
 from flask import Response
-import logging
-import responses
 import json
-import sys
 import smtplib
 import codecs
 import datetime
-from pytz import timezone
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -26,7 +19,8 @@ engine = create_engine(
 
 @app.route("/")
 def hello():
-    return "Hello A!"
+    return "Hello World!"
+
 def generatetext(sid,number):
     ques = engine.execute("SELECT question FROM surveyquestion WHERE sid = %s", sid)
     question = ques.fetchall()
