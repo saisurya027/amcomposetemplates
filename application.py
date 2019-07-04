@@ -25,7 +25,7 @@ def hello():
 
 
 def generatetext(sid, number):
-    ques = engine.execute("SELECT question FROM surveyquestion WHERE sid = %s", sid)
+    ques = engine.execute(constants.queryQuestionSurvey, sid)
     question = ques.fetchall()
     question = str(question[number])
     question = question[2:len(question) - 3]
