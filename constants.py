@@ -120,3 +120,211 @@ surveyTextCode = "1"
 surveyNumericCode = "2"
 surveyDateCode = "3"
 surveyChoiceCode = "4"
+surveyNumericPayload = """{
+    "type": "AdaptiveCard",
+    "padding": "none",
+    "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
+    "body": [
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "verticalContentAlignment": "Center",
+                                    "horizontalAlignment": "Left",
+                                    "text": "**SURVEY**"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "padding": {
+                "top": "none",
+                "left": "default",
+                "bottom": "default",
+                "right": "default"
+            },
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "**%s**",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Number",
+                    "id": "input3",
+                    "placeholder": "enter a number",
+                    "isMultiline": true
+                },
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.Http",
+                            "title": "Next",
+                            "method": "POST",
+                            "body": "%s",
+                            "url": "https://amcompose.azurewebsites.net/getsurveyquestion"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.0"
+} """
+surveyDatePayload = """{
+    "type": "AdaptiveCard",
+    "padding": "none",
+    "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
+    "body": [
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "verticalContentAlignment": "Center",
+                                    "horizontalAlignment": "Left",
+                                    "text": "**SURVEY**"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "padding": {
+                "top": "none",
+                "left": "default",
+                "bottom": "default",
+                "right": "default"
+            },
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "**%s**",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.Date",
+                    "id": "date"
+                },
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.Http",
+                            "title": "Next",
+                            "method": "POST",
+                            "body": "%s",
+                            "url": "https://amcompose.azurewebsites.net/getsurveyquestion"                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.0"
+}"""
+choiceOptionWithComma = """{
+                            "value": "%s",
+                            "title": "%s"
+                    },"""
+choiceOptionWithoutComma = """{
+                        "value": "%s",
+                        "title": "%s"
+                    }"""
+surveyChoicePayload = """{
+    "type": "AdaptiveCard",
+    "padding": "none",
+    "originator": "0eb3a855-e2d4-4bc9-8038-b22d614e4788",
+    "body": [
+        {
+            "type": "Container",
+            "style": "emphasis",
+            "items": [
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "verticalContentAlignment": "Center",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "verticalContentAlignment": "Center",
+                                    "horizontalAlignment": "Left",
+                                    "text": "**SURVEY**"
+                                }
+                            ],
+                            "width": "stretch"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "padding": {
+                "top": "none",
+                "left": "default",
+                "bottom": "default",
+                "right": "default"
+            },
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "**%s**",
+                    "wrap": true
+                },
+                {
+                    "type": "Input.ChoiceSet",
+                    "isMultiSelect": false,
+                    "style": "expanded",
+                    "choices": [ %s
+                    ]
+                    
+                },
+                {
+                    "type": "ActionSet",
+                    "actions": [
+                        {
+                            "type": "Action.Http",
+                            "title": "Next",
+                            "method": "POST",
+                            "body": "%s",
+                            "url": "https://amcompose.azurewebsites.net/getsurveyquestion"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.0"
+}"""
