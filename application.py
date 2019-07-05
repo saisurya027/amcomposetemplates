@@ -259,7 +259,7 @@ def generatestatistics(qid, question, Options, results):
         items = {constants.type: constants.TextBlock, constants.text: Options[i] + ' - ' + str(results[i]) + '/' + str(total), constants.size: 'Large',
                  'wrap': True}
         stats[constants.items].append(items)
-        titems = {constants.type: constants.Image, 'spacing': 'none', 'padding': 'none', 'padding': 'none', 'height': '25px',
+        titems = {constants.type: constants.Image, 'spacing': 'none', 'padding': 'none', 'padding': 'none', 'height': '10px',
                   'url': constants.bar,
                   constants.width: str(sizes[i]) + 'px'}
         if sizes[i] == 0:
