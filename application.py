@@ -397,7 +397,7 @@ def sendEmail():
     mail.ehlo()
     mail.starttls()
     mail.login(constants.emailid, constants.passwd)
-    mail.sendmail(constants.emailid, constants.emailid, msg.as_string())
+    mail.sendmail(constants.emailid, "mahgarg@microsoft.com", msg.as_string())
     mail.quit()
     return "HELL0"
 
