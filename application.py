@@ -24,11 +24,12 @@ def hello():
     return "test!"
 
 @app.route("/createTables")
-def hello():
+def createTables():
     engine.execute("CREATE TABLE QUESTION(qid TEXT PRIMARY KEY,ques TEXT,choice TEXT)")
     engine.execute("CREATE TABLE receipients(qid TEXT PRIMARY KEY,count TEXT)")
     engine.execute("CREATE TABLE responses(aid SERIAL,qid TEXT,response TEXT)")
     return "test!"
+
 
 def generatetext(sid, number):
     ques = engine.execute(constants.queryQuestionSurvey, sid)
