@@ -21,7 +21,7 @@ engine = create_engine(
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return "test!"
 
 
 def generatetext(sid, number):
